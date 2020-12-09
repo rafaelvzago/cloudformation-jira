@@ -1,0 +1,29 @@
+---
+- name: "Playbook for installing Jira"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+    
+    - name: "Download Jira Software files"
+      get_url:
+        url: "{{ item }}"
+        dest: /home/ec2-user/downloads/
+        mode: 0755
+      loop:
+        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.5.9-x64.bin
+        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.13.1-x64.bin
+        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.13.1.tar.gz
+    
+    - name: "Install fontconfig"
+      yum:
+        name: fontconfig
+        state: present
+    
+#    - name: "Jira installation command prompts"
+#      expect: 
+#        command: /home/ec2-user/downloads/atlassian-jira-software-8.5.9-x64.bin
+#        responses:
+#          "This will install JIRA Software 8.5.9 on your computer.": "o"
+#          "Express Install (use default settings) [1], Custom Install (recommended for advanced users) [2, Enter], Upgrade an existing JIRA installation [3]": "1"
+          

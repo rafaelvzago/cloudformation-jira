@@ -1,0 +1,19 @@
+---
+- name: "Playbook for general preparation"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+    
+    - name: "Create downloads directory"
+      become: yes
+      become_user: ec2-user
+      file:
+        path: /home/ec2-user/downloads
+        state: directory
+        mode: 0755
+    
+    - name: "Install pexpect"
+      pip:
+        name: pexpect
+        state: present

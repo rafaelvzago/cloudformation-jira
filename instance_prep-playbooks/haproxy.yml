@@ -1,0 +1,53 @@
+---
+- name: "Playbook to install HAproxy"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+    
+    - name: Install the 'Development tools' package group
+      yum:
+        name: "@Development tools"
+        state: present
+    
+    - name: "Download HAproxy package"
+      get_url:
+        url: http://www.haproxy.org/download/2.3/src/haproxy-2.3.1.tar.gz
+        dest: /home/ec2-user/downloads/
+        mode: 0755
+
+    - name: "Install HAproxy"
+      shell: |
+        tar -zxvf haproxy-2.3.1.tar.gz 
+        make TARGET=generic
+        make install
+        cp /usr/local/sbin/haproxy /usr/sbin/
+        cp /home/ec2-user/downloads/haproxy-2.3.1/examples/haproxy.init /etc/init.d/haproxy
+        chmod 755 /etc/init.d/haproxy
+        mkdir -p /etc/haproxy
+      args:
+          chdir: /home/ec2-user/downloads
+          creates: /etc/init.d/haproxy
+          
+    - name: "Create and configure 'haproxy.cfg'"
+      copy:
+        force: no
+        dest: /etc/haproxy/haproxy.cfg
+        content: |
+          global
+                  user    haproxy
+                  group   haproxy
+                  nbproc  1
+
+            defaults
+                  mode http
+                  timeout connect 5000ms
+                  timeout client 50000ms
+                  timeout server 50000ms
+
+            frontend ft_web
+                  bind 0.0.0.0:80
+                  default_backend bk_web
+
+            backend bk_web
+                  server node1 localhost:8080

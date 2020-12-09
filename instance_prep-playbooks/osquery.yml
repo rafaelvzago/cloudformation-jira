@@ -1,0 +1,22 @@
+---
+- name: "Playbook to install OSQuery"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+    
+    - name: "Download OSquery package"
+      get_url:
+        url: https://pkg.osquery.io/rpm/osquery-4.5.1-1.linux.x86_64.rpm
+        dest: /home/ec2-user/downloads/
+        mode: 0755
+    
+    - name: "Install OSQuery"
+      yum:
+        name: /home/ec2-user/downloads/osquery-4.5.1-1.linux.x86_64.rpm
+        state: present
+    
+    - name: "Install jq"
+      yum:
+        name: jq
+        state: present

@@ -1,0 +1,265 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Jira DC Intro training - PostgreSQL 9.6.8 | Jira 8.5.9 | HAProxy | NFS
+Parameters:
+  userKeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    MinLength: '1'
+    MaxLength: '41'
+    Description: 'REQUIRED: You MUST select your own user key in order to access this
+      instance. Keys must be created first under Services > EC2 > Key Pairs.'
+    ConstraintDescription: You must select an existing keypair.
+  BusinessUnit:
+    Type: String
+    AllowedValues:
+      - Premier Support-Americas
+      - Premier Support-APAC
+      - Premier Support-Americas
+      - Premier Support-EMEA
+      - Support Cloud-APAC
+      - Support Cloud-Americas
+      - Support Server-APAC
+      - Support Server-Americas
+      - Support Server-EMEA
+      - Support Server-Americas
+      - Account Management
+  ResourceOwner:
+    Type: String
+    MinLength: '1'
+    MaxLength: '41'
+    Description: 'REQUIRED: Your Atlassian Staff ID (first part of your email address)'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9\.\-\_]+'
+    ConstraintDescription: You must use a valid Staff ID.
+  Ticket:
+    Type: String
+    MinLength: '1'
+    MaxLength: '41'
+    Description: "REQUIRED: Valid Hello Jira ticket. If you don't have one, you can create it at go/create-c4laws-ticket. Stacks without a valid ticket will be automatically deleted. Read more at go/c4laws-ticket."
+    AllowedPattern: '^[a-zA-Z]{1}[a-zA-Z0-9]{1,}-[0-9]{1,8}$'
+    ConstraintDescription: 'You must specify a valid Jira ticket number'
+  PowerNap:
+    Type: String
+    Default: '480'
+    Description: >-
+      REQUIRED: Specify in minutes when the instance should auto-stop after creation.
+      Defaults to 480 minutes (8 hours) after launch. Examples: 1440 mins = 24 hours,
+      2880 mins = 48 hours, Empty = Disabled.  More Details: https://hello.atlassian.net/wiki/spaces/C4L/pages/248890558/Why+was+my+EC2+instance+stopped
+    AllowedValues:
+      - ''
+      - '60'
+      - '120'
+      - '240'
+      - '360'
+      - '480'
+      - '600'
+      - '720'
+      - '1440'
+      - '2880'
+      - '4320'
+      - '5760'
+
+Mappings:
+  RegionMap:
+    us-east-1:
+      NODE1: ami-0e7b3bbf23a27a0e4
+      NODE2: ami-00e389649898af5c2
+      SUBNET: subnet-dc6f3cb9
+      VPC: vpc-5470ef32
+
+Resources:
+  JiraNode1:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - SUBNET
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - NODE1
+      DisableApiTermination: 'false'
+      InstanceType: m5.xlarge
+      KeyName: !Ref 'userKeyName'
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 50
+      IamInstanceProfile: security-osquery
+      SecurityGroupIds:
+        - !Ref 'SecurityGroupJiraIntro'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref 'userKeyName'
+              - !Ref 'Ticket'
+              - jira-node-1
+        - Key: resource_owner
+          Value: !Ref 'ResourceOwner'
+        - Key: business_unit
+          Value: !Ref 'BusinessUnit'
+        - Key: cost_allocation
+          Value: !Ref 'BusinessUnit'
+        - Key: power_nap
+          Value: !Ref 'PowerNap'
+        - Key: service_name
+          Value: !Ref 'Ticket'
+        - Key: stackId
+          Value: !Ref 'AWS::StackId'
+        - Key: tgw_environment
+          Value: 'dev'
+      UserData: !Base64 
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash -xe 
+            - >
+              exec > >(tee /var/log/userdata.log|logger -t user-data -s
+              2>/dev/console) 2>&1
+            - |
+              sudo yum update -y
+            - |
+              sudo bash /home/ec2-user/scripts/osquery.sh
+
+  JiraNode2:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - SUBNET
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - NODE2
+      DisableApiTermination: 'false'
+      InstanceType: m5.large
+      KeyName: !Ref 'userKeyName'
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 30
+      IamInstanceProfile: security-osquery
+      SecurityGroupIds:
+        - !Ref 'SecurityGroupJiraIntro'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref 'userKeyName'
+              - !Ref 'Ticket'
+              - jira-node-2
+        - Key: resource_owner
+          Value: !Ref 'ResourceOwner'
+        - Key: business_unit
+          Value: !Ref 'BusinessUnit'
+        - Key: cost_allocation
+          Value: !Ref 'BusinessUnit'
+        - Key: power_nap
+          Value: !Ref 'PowerNap'
+        - Key: service_name
+          Value: !Ref 'Ticket'
+        - Key: stackId
+          Value: !Ref 'AWS::StackId'
+        - Key: tgw_environment
+          Value: 'dev'
+      UserData: !Base64 
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash -xe 
+            - >
+              exec > >(tee /var/log/userdata.log|logger -t user-data -s
+              2>/dev/console) 2>&1
+            - |
+              sudo yum update -y
+            - |
+              sudo bash /home/ec2-user/scripts/osquery.sh
+
+  SecurityGroupJiraIntro:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - VPC
+      GroupDescription: Allow ssh-22 inbound on rfc1918 only + PostgreSQL-5432 + Jira-8080 + Ehcache-40001_40011 + HAproxy-80 + NFS-2049_111 + Mountd-20000
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 172.31.0.0/16
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 172.31.0.0/16
+        - IpProtocol: tcp
+          FromPort: 40001
+          ToPort: 40001
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 40011
+          ToPort: 40011
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 172.31.0.0/16
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 111
+          ToPort: 111
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: udp
+          FromPort: 111
+          ToPort: 111
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 20000
+          ToPort: 20000
+          CidrIp: 10.0.0.0/8
