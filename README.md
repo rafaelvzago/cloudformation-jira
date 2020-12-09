@@ -1,14 +1,10 @@
-# README #
+# CSS Training Lab Environments #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+This repository makes use of CloudFormation templates and Ansiable to help deploy and maintain various lab environments for CSS training.
 
 ### How do I get set up? ###
+
+Current state is incomplete and requires some manual steps. Will update this once details once it's more hashed out.
 
 * Summary of set up
 * Configuration
