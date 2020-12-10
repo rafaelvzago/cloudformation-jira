@@ -13,9 +13,15 @@
         group: root
         mode: 0755
     
-    - name: "Create and configure 'exports'"
+    - name: "Create 'exports' directory and add shared-home"
       copy:
         force: no
         dest: /etc/exports
         content: |
           /var/atlassian/application-data/shared-home *(rw,sync,all_squash,anonuid=1001) # jira id is 1001
+    
+    - name: "Make sure nfs service is running"
+      systemd:
+        name: nfs
+        enabled: yes
+        state: started
