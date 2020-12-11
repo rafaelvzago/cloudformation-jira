@@ -14,6 +14,13 @@
         state: directory
         mode: 0755
 
+# yum update
+    - name: Upgrade all packages, excluding kernel related packages
+      yum:
+        name: '*'
+        state: latest
+        exclude: kernel*
+
 # Needed to make use of ansible "expect" module    
     - name: "Install pexpect"
       pip:
