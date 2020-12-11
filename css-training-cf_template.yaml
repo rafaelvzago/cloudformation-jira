@@ -61,7 +61,7 @@ Mappings:
   RegionMap:
     us-east-1:
       NODE1: ami-0e7b3bbf23a27a0e4
-      NODE2: ami-00e389649898af5c2
+      NODE2: ami-04d29b6f966df1537
       SUBNET: subnet-dc6f3cb9
       VPC: vpc-5470ef32
 
@@ -170,14 +170,18 @@ Resources:
           - ''
           - - |
               #!/bin/bash -xe 
-            - >
               exec > >(tee /var/log/userdata.log|logger -t user-data -s
               2>/dev/console) 2>&1
-            - |
               sudo yum update -y
-            - |
-              sudo bash /home/ec2-user/scripts/osquery.sh
-
+              curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+              sudo python get-pip.py
+              sudo python -m pip install ansible
+              mkdir /home/ec2-user/scripts
+              cd /home/ec2-user/scripts
+              aws s3api get-object --key ansible-instance_prep.tar.gz --bucket arn:aws:s3:us-east-1:215807173322:accesspoint/css-training-scripts-ap ansible-instance_prep.tar.gz
+              tar -zxvf ansible-instance_prep.tar.gz
+              ansible-playbook instance_prep-master.yml
+              
   SecurityGroupJiraIntro:
     Type: AWS::EC2::SecurityGroup
     Properties:
