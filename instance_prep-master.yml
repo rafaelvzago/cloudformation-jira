@@ -2,6 +2,6 @@
 - import_playbook: instance_prep-playbooks/general.yml
 - import_playbook: instance_prep-playbooks/osquery.yml
 - import_playbook: instance_prep-playbooks/postgresql.yml
-- import_playbook: instance_prep-playbooks/haproxy.yml
+- import_playbook: instance_prep-playbooks/haproxy.yml --extra-vars "installation_type=server"
 - import_playbook: instance_prep-playbooks/nfs-server.yml
 #- import_playbook: instance_prep-playbooks/jira.yml
