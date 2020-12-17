@@ -1,8 +1,8 @@
 ---
 - name: "Playbook for installing Jira"
   hosts: localhost
-  become: yes
-  
+  vars:
+    my_version: "{{ version }}" 
   tasks:
     
     - name: "Download Jira Software files"
@@ -11,19 +11,44 @@
         dest: /home/ec2-user/downloads/
         mode: 0755
       loop:
-        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.5.9-x64.bin
-        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.13.1-x64.bin
-        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.13.1.tar.gz
+        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-{{ my_version }}.bin
     
     - name: "Install fontconfig"
       yum:
         name: fontconfig
         state: present
+
+    - name: Creating Jira  directory
+      file:
+        path: /home/ec2-user/atlassian/application-data/jira
+        state: directory
     
-#    - name: "Jira installation command prompts"
-#      expect: 
-#        command: /home/ec2-user/downloads/atlassian-jira-software-8.5.9-x64.bin
-#        responses:
-#          "This will install JIRA Software 8.5.9 on your computer.": "o"
-#          "Express Install (use default settings) [1], Custom Install (recommended for advanced users) [2, Enter], Upgrade an existing JIRA installation [3]": "1"
-          
+    - name: "Jira database setup"
+      copy:
+        src: /home/ec2-user/downloads/assets/dbconfig.xml
+        dest: /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
+
+    - name: "Changing the IP address to the instance database"
+      command: sed -i 's/localhost:5432/ServiceNode:5432/' /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
+
+    - name: "Jira installation"
+      command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/downloads/assets/response.varfile
+
+    #- name: "Restoring Sample Data for Jira Server"
+    # command: pg_restore -h localhost -p 5432 -U postgres -d jira -v "/home/ec2-user/downloads/assets/jira_server-8-13-1_sample.backup"
+
+    - name:  "Starting Jira"
+      command: /home/ec2-user/atlassian/jira/bin/start-jira.sh
+
+    - name: "Wating to jira completely starts"
+      uri:
+        url: "http://localhost:8080/status"
+        follow_redirects: none
+        method: GET
+      register: _result
+      until: _result.status == 200
+      retries: 120
+      delay: 5 
+
+    #- name: "Reindexing Jira"
+      #command: curl -u admin:admin -X POST localhost:8080/rest/api/2/reindex?typeFOREGROUND
