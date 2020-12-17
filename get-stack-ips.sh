@@ -7,10 +7,14 @@ STACK_NAME=$(aws ec2 describe-instances \
   --region $REGION \
   --output text)
 
-NODE1=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region $REGION --query "Stacks[0].Outputs[?OutputKey=='Node1PrivIp'].OutputValue" --output text)
-NODE2=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region $REGION --query "Stacks[0].Outputs[?OutputKey=='Node2PrivIp'].OutputValue" --output text)
-SERVICENODE=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --region $REGION --query "Stacks[0].Outputs[?OutputKey=='ServiceNodePrivIp'].OutputValue" --output text)
+NODE1=$(aws cloudformation describe-stack-resources --stack-name $STACK_NAME --region $REGION --logical-resource-id "Node1" | grep 'PhysicalResourceId' | awk {'print $2'} | tr -d '"\|,')
+NODE2=$(aws cloudformation describe-stack-resources --stack-name $STACK_NAME --region $REGION --logical-resource-id "Node2" | grep 'PhysicalResourceId' | awk {'print $2'} | tr -d '"\|,')
+SERVICENODE=$(aws cloudformation describe-stack-resources --stack-name $STACK_NAME --region $REGION --logical-resource-id "ServiceNode" | grep 'PhysicalResourceId' | awk {'print $2'} | tr -d '"\|,')
 
-sudo echo "$NODE1	Node1" >> /etc/hosts
-sudo echo "$NODE2	Node2" >> /etc/hosts
-sudo echo "$SERVICENODE	ServiceNode" >> /etc/hosts
+NODE1IP=$(aws ec2 describe-instances --region $REGION --instance-id $NODE1 --query 'Reservations[*].Instances[*].PrivateIpAddress' --output text)
+NODE2IP=$(aws ec2 describe-instances --region $REGION --instance-id $NODE2 --query 'Reservations[*].Instances[*].PrivateIpAddress' --output text)
+SERVICENODEIP=$(aws ec2 describe-instances --region $REGION --instance-id $SERVICENODE --query 'Reservations[*].Instances[*].PrivateIpAddress' --output text)
+
+sudo echo "$NODE1IP	Node1" >> /etc/hosts
+sudo echo "$NODE2IP	Node2" >> /etc/hosts
+sudo echo "$SERVICENODEIP	ServiceNode" >> /etc/hosts
