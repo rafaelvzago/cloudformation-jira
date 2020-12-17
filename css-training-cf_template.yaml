@@ -130,8 +130,8 @@ Resources:
               aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/scripts/ansible-instance_prep.tar.gz
             - |
               tar -zxvf /home/ec2-user/scripts/ansible-instance_prep.tar.gz -C /home/ec2-user/scripts
-            - |
-              ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
+            #- |
+            #  ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
   Node2:
     Type: AWS::EC2::Instance
@@ -266,8 +266,8 @@ Resources:
               aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/scripts/ansible-instance_prep.tar.gz
             - |
               tar -zxvf /home/ec2-user/scripts/ansible-instance_prep.tar.gz -C /home/ec2-user/scripts
-              #- |
-              #ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
+            - |
+              ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
   SecurityGroupNode:
     Type: AWS::EC2::SecurityGroup
