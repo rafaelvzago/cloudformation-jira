@@ -35,7 +35,7 @@
       command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/downloads/assets/response.varfile
 
     #- name: "Restoring Sample Data for Jira Server"
-    # command: pg_restore -h localhost -p 5432 -U postgres -d jira -v "/home/ec2-user/downloads/assets/jira_server-8-13-1_sample.backup"
+    #  command: pg_restore -h ServiceNode -p 5432 -U postgres -d jira -v "/home/ec2-user/downloads/assets/jira_server-8-13-1_sample.backup"
 
     - name:  "Starting Jira"
       command: /home/ec2-user/atlassian/jira/bin/start-jira.sh
