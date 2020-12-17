@@ -59,3 +59,6 @@
         name: postgresql
         state: restarted
         daemon_reload: yes
+
+    - name: "Restoring Sample Data for Jira Server"
+      command: pg_restore -h localhost -p 5432 -U postgres -d jira -v "/home/ec2-user/scripts/assets/jira_server-8-13-1_sample.backup"

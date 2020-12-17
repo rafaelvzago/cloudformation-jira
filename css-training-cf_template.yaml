@@ -130,8 +130,8 @@ Resources:
               aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/scripts/ansible-instance_prep.tar.gz
             - |
               tar -zxvf /home/ec2-user/scripts/ansible-instance_prep.tar.gz -C /home/ec2-user/scripts
-            - |
-              ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
+            #- |
+            #  ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
   Node2:
     Type: AWS::EC2::Instance
@@ -198,8 +198,8 @@ Resources:
               aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/scripts/ansible-instance_prep.tar.gz
             - |
               tar -zxvf /home/ec2-user/scripts/ansible-instance_prep.tar.gz -C /home/ec2-user/scripts
-            - |
-              ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
+              #- |
+              #ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
   ServiceNode:
     Type: AWS::EC2::Instance
@@ -401,7 +401,21 @@ Resources:
         - IpProtocol: tcp
           FromPort: 8095
           ToPort: 8095
-        
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
 
   SecurityGroupServiceNode:
     Type: AWS::EC2::SecurityGroup
@@ -464,3 +478,18 @@ Resources:
           FromPort: 20000
           ToPort: 20000
           CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
