@@ -57,23 +57,6 @@ Parameters:
       - '4320'
       - '5760'
 
-Outputs:
-  Node1PrivIp:
-    Description: Private IP for DC Node 1
-    Value: !GetAtt Node1.PrivateIp
-    Export:
-      Name: 'Node1PrivIp'
-  Node2PrivIp:
-    Description: Private IP for DC Node 2
-    Value: !GetAtt Node2.PrivateIp
-    Export:
-      Name: 'Node2PrivIp'
-  ServiceNodePrivIp:
-    Description: Private IP for Service Node
-    Value: !GetAtt ServiceNode.PrivateIp
-    Export:
-      Name: 'ServiceNodePrivIp'
-
 Mappings:
   RegionMap:
     us-east-1:
