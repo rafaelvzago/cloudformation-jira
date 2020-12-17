@@ -127,9 +127,9 @@ Resources:
             - |
               mkdir /home/ec2-user/scripts
             - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep-2.tar.gz /home/ec2-user/scripts/ansible-instance_prep-2.tar.gz
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/scripts/ansible-instance_prep.tar.gz
             - |
-              tar -xvf /home/ec2-user/scripts/ansible-instance_prep-2.tar.gz -C /home/ec2-user/scripts
+              tar -zxvf /home/ec2-user/scripts/ansible-instance_prep.tar.gz -C /home/ec2-user/scripts
               #- |
               #ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
@@ -195,9 +195,9 @@ Resources:
             - |
               mkdir /home/ec2-user/scripts
             - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep-2.tar.gz /home/ec2-user/scripts/ansible-instance_prep-2.tar.gz
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/scripts/ansible-instance_prep.tar.gz
             - |
-              tar -xvf /home/ec2-user/scripts/ansible-instance_prep-2.tar.gz -C /home/ec2-user/scripts
+              tar -zxvf /home/ec2-user/scripts/ansible-instance_prep.tar.gz -C /home/ec2-user/scripts
               #- |
               #ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
@@ -263,9 +263,9 @@ Resources:
             - |
               mkdir /home/ec2-user/scripts
             - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep-2.tar.gz /home/ec2-user/scripts/ansible-instance_prep-2.tar.gz
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/scripts/ansible-instance_prep.tar.gz
             - |
-              tar -xvf /home/ec2-user/scripts/ansible-instance_prep-2.tar.gz -C /home/ec2-user/scripts
+              tar -zxvf /home/ec2-user/scripts/ansible-instance_prep.tar.gz -C /home/ec2-user/scripts
               #- |
               #ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
