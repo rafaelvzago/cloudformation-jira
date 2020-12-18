@@ -12,6 +12,8 @@ pipelines:
           script:
             - mkdir compressed
             - tar -c --exclude='bitbucket-pipelines.yml' --exclude='css-training-cf_template.yaml'  . | gzip > compressed/ansible-instance_prep.tar.gz 
+          artifacts:
+            - compressed/*
       - step:
           name: 'Deploy to S3'
           deployment: production
