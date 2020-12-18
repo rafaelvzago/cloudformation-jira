@@ -5,25 +5,22 @@
 image: atlassian/default-image:2
 
 pipelines:
-  default:
-    - parallel:
+  branches:
+    rafaelzago:
       - step:
           name: 'Compressing files'
           script:
             - mkdir compressed
-            - tar -c --exclude='bitbucket-pipelines.yml' --exclude='css-training-cf_template.yaml'  . | gzip > compressed/ansible-instance_prep.tar.gz 
-            - ls -ltrhR
-#  branches:
-#    rafaelzago:
-#      - step:
-#          name: 'Deploy to S3'
-#          deployment: production
-#          script:
-#            - pipe: atlassian/aws-s3-deploy:0.3.8
-#              variables:
-#                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-#                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-#                AWS_DEFAULT_REGION: 'us-east-1'
-#                S3_BUCKET: 'css-training-scripts'
-#                LOCAL_PATH: 'compressed'
-#                ACL: 'public-read'
+            - tar -c --exclude='bitbucket-pipelines.yml' --exclude='css-training-cf_template.yaml' --exclude='README.md'  . | gzip > compressed/ansible-instance_prep.tar.gz 
+      - step:
+          name: 'Deploy to S3'
+          deployment: production
+          script:
+            - pipe: atlassian/aws-s3-deploy:0.3.8
+             variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: 'us-east-1'
+                S3_BUCKET: 'css-training-scripts'
+                LOCAL_PATH: 'compressed'
+                ACL: 'public-read'
