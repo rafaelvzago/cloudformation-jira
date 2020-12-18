@@ -11,4 +11,4 @@ pipelines:
           name: 'Compressing files'
           script:
             - tar -c . | gzip > archive.tar.gz
-
+            - ls -ltrh
