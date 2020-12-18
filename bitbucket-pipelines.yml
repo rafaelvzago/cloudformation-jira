@@ -10,4 +10,4 @@ pipelines:
       - step:
           name: 'Send Files to S3 Bucket'
           script:
-            - echo "Your build and test goes here..."
+            - echo ls 
