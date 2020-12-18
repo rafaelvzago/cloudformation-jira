@@ -6,7 +6,7 @@ image: atlassian/default-image:2
 
 pipelines:
   branches:
-    rafaelzago:
+    master:
       - step:
           name: 'Compressing files'
           script:
