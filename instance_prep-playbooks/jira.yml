@@ -11,7 +11,7 @@
         dest: /home/ec2-user/downloads/
         mode: 0755
       loop:
-        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-{{ my_version }}-x64.bin
+        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-{{ my_version }}.bin
     
     - name: "Install fontconfig"
       yum:
@@ -32,7 +32,10 @@
       command: sed -i 's/localhost:5432/ServiceNode:5432/' /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
 
     - name: "Jira installation"
-      command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}-x64.bin -q -varfile /home/ec2-user/downloads/assets/response.varfile
+      command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/downloads/assets/response.varfile
+
+    #- name: "Restoring Sample Data for Jira Server"
+    # command: pg_restore -h localhost -p 5432 -U postgres -d jira -v "/home/ec2-user/downloads/assets/jira_server-8-13-1_sample.backup"
 
     - name:  "Starting Jira"
       command: /home/ec2-user/atlassian/jira/bin/start-jira.sh
