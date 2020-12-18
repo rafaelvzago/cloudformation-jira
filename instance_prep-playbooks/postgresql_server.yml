@@ -44,15 +44,21 @@
       replace:
         path: /var/lib/pgsql/data/postgresql.conf
         regexp: "#listen_addresses = 'localhost'"
-        replace: "listen_addresses = 'localhost'"
+        replace: "listen_addresses = '*'"
     
-    - name: "Configure 'pg_hba.conf' IPv4 to trust all"
+    - name: "Configure 'pg_hba.conf' local IPv4 to trust all"
       become: yes
       become_user: postgres
       replace:
         path: /var/lib/pgsql/data/pg_hba.conf
         regexp: 'host    all             all             127.0.0.1/32            ident'
         replace: 'host    all             all             127.0.0.1/32            trust'
+
+    - name: "Ensure PostgreSQL pg_hba.conf is configured to allow access from internal network addresses"
+      lineinfile:
+        path: /var/lib/pgsql/data/pg_hba.conf
+        regexp: 'host    all             all             10.0.0.0/8            trust'
+        line: 'host    all             all             10.0.0.0/8            trust'
         
     - name: "Restart PostgreSQL"
       systemd:
@@ -60,5 +66,6 @@
         state: restarted
         daemon_reload: yes
 
-    - name: "Restoring Sample Data for Jira Server"
-      command: pg_restore -h localhost -p 5432 -U postgres -d jira -v "/home/ec2-user/scripts/assets/jira_server-8-13-1_sample.backup"
+# We'll want to move this to the product node once we have PostgreSQL accepting connections.
+#    - name: "Restoring Sample Data for Jira Server"
+#      command: pg_restore -h localhost -p 5432 -U postgres -d jira -v "/home/ec2-user/scripts/assets/jira_server-8-13-1_sample.backup"
