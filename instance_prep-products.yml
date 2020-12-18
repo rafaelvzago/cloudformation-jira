@@ -3,4 +3,4 @@
 - include: instance_prep-playbooks/osquery.yml
 - include: instance_prep-playbooks/postgresql_client.yml
 - include: instance_prep-playbooks/mount-shared.yml
-- include: instance_prep-playbooks/jira.yml
+#- include: instance_prep-playbooks/jira.yml
