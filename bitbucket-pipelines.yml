@@ -8,7 +8,7 @@ pipelines:
   default:
     - parallel:
       - step:
-          name: 'Send Files to S3 Bucket'
+          name: 'Compressing files'
           script:
-            - ls 
+            - tar -c . | gzip > archive.tar.gz
 
