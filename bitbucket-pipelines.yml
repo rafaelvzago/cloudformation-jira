@@ -10,5 +10,18 @@ pipelines:
       - step:
           name: 'Compressing files'
           script:
-            - tar -c . | gzip > archive.tar.gz
+            - mkdir compressed
+            - tar -c . | gzip > compressed/ansible-instance_prep.tar.gz 
             - ls -ltrh
+#      - step:
+#          name: 'Deploy to S3'
+#          deployment: production
+#          script:
+#            - pipe: atlassian/aws-s3-deploy:0.3.8
+#              variables:
+#                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+#                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+#                AWS_DEFAULT_REGION: 'us-east-1'
+#                S3_BUCKET: 'css-training-scripts'
+#                LOCAL_PATH: 'compressed'
+#                ACL: 'public-read'
