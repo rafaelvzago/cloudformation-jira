@@ -12,8 +12,8 @@ pipelines:
           deployment: production
           script:
             - mkdir compressed
-            - tar -zcvf ansible-instance-prep-rafael.tar.gz master-playbooks/  
-            - cp ansible-instance-prep-rafael.tar.gz compressed/
+            - tar -zcvf ansible-instance-prep_rafael.tar.gz master-playbooks/  
+            - cp ansible-instance_prep-rafael.tar.gz compressed/
             - pipe: atlassian/aws-s3-deploy:0.3.8
               variables:
                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID

@@ -125,9 +125,9 @@ Resources:
             - |
               sudo python -m pip install ansible
             - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep-rafael.tar.gz /home/ec2-user/ansible-instance_prep-rafael.tar.gz
+              aws s3 cp s3://css-training-scripts/instance_prep-rafael.tar.gz /home/ec2-user/ansible-instance_prep-rafael.tar.gz
             - |
-              tar -zxvf /home/ec2-user/scripts/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
+              tar -zxvf /home/ec2-user/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
             #- |
             #  ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
@@ -193,7 +193,7 @@ Resources:
             - |
               aws s3 cp s3://css-training-scripts/ansible-instance_prep-rafael.tar.gz /home/ec2-user/ansible-instance_prep-rafael.tar.gz
             - |
-              tar -zxvf /home/ec2-user/scripts/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
+              tar -zxvf /home/ec2-user/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
             #- |
             #  ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
