@@ -17,6 +17,7 @@ pipelines:
             - cp -R common-scripts/* scripts/
             - tar -cf ansible-instance-prep-rafael.tar scripts/  
             - gzip -9 ansible-instance-prep-rafael.tar
+            - cp ansible-instance-prep-rafael.tar.gz compressed/
           artifacts:
             - ansible-instance-prep-rafael.tar.gz
       - step:
@@ -29,5 +30,5 @@ pipelines:
                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                AWS_DEFAULT_REGION: 'us-east-1'
                S3_BUCKET: 'css-training-scripts'
-               LOCAL_PATH: './ansible-instance-prep-rafael.tar.gz'
+               LOCAL_PATH: 'compressed'
                ACL: 'public-read'
