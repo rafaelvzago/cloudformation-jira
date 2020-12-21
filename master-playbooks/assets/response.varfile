@@ -1,9 +1,0 @@
-app.install.service$Boolean=false
-app.jiraHome=/home/ec2-user/atlassian/application-data/jira
-existingInstallationDir=/home/ec2-user/atlassian
-launch.application$Boolean=true
-portChoice=default
-sys.adminRights$Boolean=false
-sys.confirmedUpdateInstallationString=false
-sys.installationDir=/home/ec2-user/atlassian/jira
-sys.languageId=en

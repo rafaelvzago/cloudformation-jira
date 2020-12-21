@@ -1,6 +1,0 @@
----
-- include: master-playbooks/general.yml
-- include: master-playbooks/osquery.yml
-- include: master-playbooks/postgresql_client.yml
-- include: master-playbooks/mount-shared.yml
-- include: master-playbooks/jira.yml version=8.13.2-x64

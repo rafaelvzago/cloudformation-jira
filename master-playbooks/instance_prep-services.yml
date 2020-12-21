@@ -1,6 +1,0 @@
----
-- include: master-playbooks/general.yml
-- include: master-playbooks/osquery.yml
-- include: master-playbooks/postgresql_server.yml
-- include: master-playbooks/nfs-server.yml
-- include: master-playbooks/haproxy.yml installation_type=server
