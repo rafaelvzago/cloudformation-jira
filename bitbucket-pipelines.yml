@@ -6,14 +6,19 @@ image: atlassian/default-image:2
 
 pipelines:
   branches:
-    master:
+    rafaelzago:
       - step:
           name: 'Compressing files'
           script:
+            - mkdir scripts
             - mkdir compressed
-            - tar -c --exclude='bitbucket-pipelines.yml' --exclude='css-training-cf_template.yaml'  . | gzip > compressed/ansible-instance_prep.tar.gz 
+            - cp jira-playbooks/* scripts/
+            - cp common-playbooks/* scripts/
+            - cp common-scripts/* scripts/
+            - tar -cf ansible-instance-prep-rafael.tar scripts/  
+            - gzip -9 ansible-instance-prep-rafael.tar
           artifacts:
-            - compressed/*
+            - compressed
       - step:
           name: 'Deploy to S3'
           deployment: production
@@ -24,5 +29,5 @@ pipelines:
                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
                AWS_DEFAULT_REGION: 'us-east-1'
                S3_BUCKET: 'css-training-scripts'
-               LOCAL_PATH: 'compressed'
+               LOCAL_PATH: 'ansible-instance-prep-rafael.tar.gz'
                ACL: 'public-read'
