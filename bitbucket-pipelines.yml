@@ -19,7 +19,7 @@ pipelines:
             - gzip -9 ansible-instance-prep-rafael.tar
             - cp ansible-instance-prep-rafael.tar.gz compressed/
           artifacts:
-            - ansible-instance-prep-rafael.tar.gz
+            - compressed
       - step:
           name: 'Deploy to S3'
           deployment: production
