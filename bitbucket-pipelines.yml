@@ -1,29 +1,13 @@
-# This is an example Starter pipeline configuration
-# Use a skeleton to build, test and deploy using manual and parallel steps
-# -----
-# You can specify a custom docker image from Docker Hub as your build environment.
-image: atlassian/default-image:2
+image: python:3.5.1
 
 pipelines:
-  branches:
-    rafaelzago:
-      - step:
-          name: 'Deploy to S3'
-          deployment: production
-          script:
-            - mkdir scripts
-            - mkdir compressed
-            - cp -R jira-playbooks/* scripts/
-            - cp -R common-playbooks/* scripts/
-            - cp -R common-scripts/* scripts/
-            - tar -cf ansible-instance-prep-rafael.tar scripts/  
-            - gzip -9 ansible-instance-prep-rafael.tar
-            - cp ansible-instance-prep-rafael.tar.gz compressed/
-            - pipe: atlassian/aws-s3-deploy:0.3.8
-              variables:
-               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
-               AWS_DEFAULT_REGION: 'us-east-1'
-               S3_BUCKET: 'css-training-scripts'
-               LOCAL_PATH: 'compressed'
-               ACL: 'public-read'
+    branches:
+      master:
+        - step:
+            script:
+                # Install zip 
+                #- apt-get update
+                # Install AWS Boto 
+                - pip install boto3==1.3.0
+                # Upload package to S3, arguments are bucket-name local-file-name remote-file-name
+                - python s3_upload.py ${S3_BUCKET_NAME} common-scripts/osquery.sh osquery.sh
