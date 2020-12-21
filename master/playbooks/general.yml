@@ -1,0 +1,78 @@
+---
+- name: "Playbook for general preparation"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+
+# Central location for all downloads    
+    - name: "Create downloads directory"
+      become: yes
+      become_user: ec2-user
+      file:
+        path: /home/ec2-user/downloads
+        state: directory
+        mode: 0755
+
+# yum update
+    - name: Upgrade all packages, excluding kernel related packages
+      yum:
+        name: '*'
+        state: latest
+        exclude: kernel*
+
+# Needed to make use of ansible "expect" module    
+    - name: "Install pexpect"
+      pip:
+        name: pexpect
+        state: present
+
+# Configuring system to use AWS CLI
+    - name: "Install boto for AWS CLI"
+      pip:
+        name:
+        - boto3
+        - botocore
+    
+    - name: "Get AWS EC2 Instance Region"
+      uri:
+        url: http://169.254.169.254/latest/meta-data/placement/availability-zone
+        return_content: yes
+      register: ec2_region
+
+    - name: Ensures ~/.aws/ dir exists
+      file:
+        path: ~/.aws
+        state: directory
+    
+    - name: "Create AWS CLI config file"
+      copy:
+        force: yes
+        dest: ~/.aws/config
+        content: |
+          [default]
+          region={{ ec2_region['content'][:-1] }}
+
+# Retrieve all ips within the stack
+    - name: "Run get-stack-ips.sh"
+      shell: /home/ec2-user/master/get-stack-ips.sh
+      args:
+        executable: /bin/bash
+
+# Test AWS CLI to retrieve Instance Details
+#    - name: "Get AWS EC2 Instance Region"
+#      uri:
+#        url: http://169.254.169.254/latest/meta-data/instance-id
+#        return_content: yes
+#      register: ec2_instance
+#    
+#    - name: "Return Current Instances IP address"
+#      ec2_instance_facts:
+#        instance_ids: "{{ ec2_instance['content'] }}"
+#      register: ec2_metadata
+#
+#    - debug:
+#        msg:
+#          - "{{ ec2_metadata.instances[0].placement.availability_zone }}"
+#          - "{{ ec2_metadata.instances[0].instance_id }}"
+#          - "{{ ec2_metadata.instances[0].private_ip_address }}"

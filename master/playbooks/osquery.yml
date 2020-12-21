@@ -1,0 +1,78 @@
+---
+- name: "Playbook to install OSQuery"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+    
+    - name: "Download OSquery package"
+      get_url:
+        url: https://pkg.osquery.io/rpm/osquery-4.5.1-1.linux.x86_64.rpm
+        dest: /home/ec2-user/downloads/
+        mode: 0755
+    
+    - name: "Install OSQuery"
+      yum:
+        name: /home/ec2-user/downloads/osquery-4.5.1-1.linux.x86_64.rpm
+        state: present
+    
+    - name: "Install jq"
+      yum:
+        name: jq
+        state: present
+    
+    - name: "Copy osquery.conf"
+      copy:
+        force: no
+        src: /usr/share/osquery/osquery.example.conf
+        dest: /etc/osquery/osquery.conf
+    
+    - name: "Create osquery.flags"
+      copy:
+        force: no
+        dest: /etc/osquery/osquery.flags
+        content: |
+          --force=true
+          --host_identifier=hostname
+          --tls_hostname=fleet-server.prod.atl-paas.net
+          --config_plugin=tls
+          --config_tls_refresh=300
+          --enroll_tls_endpoint=/api/v1/osquery/enroll
+          --config_tls_endpoint=/api/v1/osquery/config
+          --enroll_secret_path=/etc/osquery/kolide.enrollment_secret
+          --logger_min_status=2
+          --aws_kinesis_stream=prod-logs
+          --aws_sts_arn_role=arn:aws:iam::915926889391:role/pipeline-prod-log-producer-215807173322
+          --audit_allow_process_events=true
+          --disable_events=false
+          --disable_audit=false
+          --allow_audit_config=true
+          --aws_region=us-east-1
+          --aws_sts_region=us-east-1
+          --aws_sts_session_name=osquery
+
+    - name: "Create osqueryd"
+      copy:
+        force: no
+        dest: /etc/default/osqueryd
+        content: |
+          FLAG_FILE="/etc/osquery/osquery.flags"
+          CONFIG_FILE="/etc/osquery/osquery.conf"
+          LOCAL_PIDFILE="/var/osquery/osqueryd.pidfile"
+          PIDFILE="/var/run/osqueryd.pidfile"
+
+          # Custom env vars decorators
+          OSQUERY_SERVICE=css_support
+          OSQUERY_ENV=osquery_css
+          OSQUERY_DEPLOYMENT_ID=10.125.91.122
+    
+    - name: "Enable and start OSqueryd"
+      systemd:
+        name: osqueryd
+        enabled: yes
+        state: started
+    
+    - name: "Run osquery.sh"
+      shell: /home/ec2-user/master/osquery.sh
+      args:
+          executable: /bin/bash

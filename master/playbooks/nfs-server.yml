@@ -1,0 +1,27 @@
+---
+- name: "Playbook to setup NFS server"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+    
+    - name: "Create shared directory"
+      file:
+        path: /var/atlassian/application-data/shared-home
+        state: directory
+        owner: ec2-user
+        group: root
+        mode: 0755
+    
+    - name: "Create 'exports' directory and add shared-home"
+      copy:
+        force: yes
+        dest: /etc/exports
+        content: |
+          /var/atlassian/application-data/shared-home *(rw,sync,all_squash,anonuid=1000) # ec2-user id is 1000
+    
+    - name: "Make sure nfs service is running"
+      systemd:
+        name: nfs
+        enabled: yes
+        state: started

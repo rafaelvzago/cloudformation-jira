@@ -1,0 +1,11 @@
+---
+- name: "Playbook to setup PostgreSQL client"
+  hosts: localhost
+  become: yes
+  
+  tasks:
+
+    - name: "Install PostgreSQL9.6"
+      shell: amazon-linux-extras install postgresql9.6 vim epel -y
+      args:
+        creates: /usr/bin/psql

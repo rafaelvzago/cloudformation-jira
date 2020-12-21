@@ -1,0 +1,6 @@
+---
+- include: playbooks/general.yml
+- include: playbooks/osquery.yml
+- include: playbooks/postgresql_client.yml
+- include: playbooks/mount-shared.yml
+- include: playbooks/jira.yml version=8.13.2-x64

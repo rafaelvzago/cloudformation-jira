@@ -1,0 +1,37 @@
+---
+- name: "Playbook for installing Bitbucket Server"
+  hosts: localhost
+  become: yes
+  become_user: ec2-user
+  
+  tasks:
+    
+    - name: "Install fontconfig"
+      yum:
+        name: fontconfig
+        state: present
+
+    - name: "Ensure Bitbucket directory exists"
+      file:
+        path: /home/ec2-user/atlassian
+        state: directory
+        mode: 0755
+
+    - name: "Download Bitbucket Server files"
+      get_url:
+        url: "{{ item }}"
+        dest: /home/ec2-user/downloads/
+        mode: 0755
+      loop:
+        - https://product-downloads.atlassian.com/software/stash/downloads/atlassian-bitbucket-7.6.2.tar.gz
+        
+    - name: "Extracting"
+      unarchive: 
+        src: /home/ec2-user/downloads/atlassian-bitbucket-7.6.2.tar.gz
+        dest: /home/ec2-user/atlassian
+        remote_src: yes
+        list_files: yes
+      register: archive_contents
+      
+    - debug:
+        msg: "{{ archive_contents.files[0].split('/')[0] }}"
