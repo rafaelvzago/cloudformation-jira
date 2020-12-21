@@ -9,7 +9,7 @@
 # To prettify verbose ansible output      
     - name: "Create ansible.cfg"
       copy:
-        dest: /home/ec2-user/scripts/ansible.cfg
+        dest: /home/ec2-user/master-playbooks/ansible.cfg
         content: |
           [defaults]
           {{'#'}} User YAML callback plugin

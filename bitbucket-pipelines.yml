@@ -11,13 +11,8 @@ pipelines:
           name: 'Deploy to S3'
           deployment: production
           script:
-            - mkdir scripts
             - mkdir compressed
-            - cp -R jira-playbooks/* scripts/
-            - cp -R common-playbooks/* scripts/
-            - cp -R common-scripts/* scripts/
-            - tar -cf ansible-instance-prep.tar scripts/  
-            - gzip -9 ansible-instance-prep.tar
+            - tar -zcvf ansible-instance-prep.tar master-playbooks/  
             - cp ansible-instance-prep.tar.gz compressed/
             - pipe: atlassian/aws-s3-deploy:0.3.8
               variables:

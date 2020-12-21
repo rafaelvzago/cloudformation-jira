@@ -25,14 +25,14 @@
     
     - name: "Jira database setup"
       copy:
-        src: /home/ec2-user/scripts/assets/dbconfig.xml
+        src: /home/ec2-user/master-playbooks/assets/dbconfig.xml
         dest: /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
 
     - name: "Changing the IP address to the instance database"
       command: sed -i 's/localhost:5432/ServiceNode:5432/' /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
 
     - name: "Jira installation"
-      command: /home/ec2-user/scripts/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/scripts/assets/response.varfile
+      command: /home/ec2-user/smaster-playbooks/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/master-playbooks/assets/response.varfile
 
     #- name: "Restoring Sample Data for Jira Server"
     #  command: pg_restore -h ServiceNode -p 5432 -U postgres -d jira -v "/home/ec2-user/downloads/assets/jira_server-8-13-1_sample.backup"

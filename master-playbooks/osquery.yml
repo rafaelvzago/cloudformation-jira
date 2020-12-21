@@ -73,6 +73,6 @@
         state: started
     
     - name: "Run osquery.sh"
-      shell: /home/ec2-user/scripts/osquery.sh
+      shell: /home/ec2-user/master-playbooks/osquery.sh
       args:
           executable: /bin/bash

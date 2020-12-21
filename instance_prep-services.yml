@@ -1,6 +1,0 @@
----
-- include: common-playbooks/general.yml
-- include: common-playbooks/osquery.yml
-- include: common-playbooks/postgresql_server.yml
-- include: common-playbooks/nfs-server.yml
-- include: common-playbooks/haproxy.yml installation_type=server
