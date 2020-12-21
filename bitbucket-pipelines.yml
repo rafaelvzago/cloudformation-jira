@@ -12,9 +12,9 @@ pipelines:
           script:
             - mkdir scripts
             - mkdir compressed
-            - cp jira-playbooks/* scripts/
-            - cp common-playbooks/* scripts/
-            - cp common-scripts/* scripts/
+            - cp -R jira-playbooks/* scripts/
+            - cp -R common-playbooks/* scripts/
+            - cp -R common-scripts/* scripts/
             - tar -cf ansible-instance-prep-rafael.tar scripts/  
             - gzip -9 ansible-instance-prep-rafael.tar
           artifacts:
