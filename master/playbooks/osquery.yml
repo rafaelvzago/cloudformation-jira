@@ -6,7 +6,7 @@
   tasks:
     
     - name: "Download OSquery package"
-      become: ys
+      become: yes
       become_user: ec2-user
       get_url:
         url: https://pkg.osquery.io/rpm/osquery-4.5.1-1.linux.x86_64.rpm
