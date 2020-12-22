@@ -6,6 +6,8 @@
   tasks:
     
     - name: "Download OSquery package"
+      become: yes
+      become_user: ec2-user
       get_url:
         url: https://pkg.osquery.io/rpm/osquery-4.5.1-1.linux.x86_64.rpm
         dest: /home/ec2-user/downloads/
@@ -73,6 +75,6 @@
         state: started
     
     - name: "Run osquery.sh"
-      shell: /home/ec2-user/scripts/osquery.sh
+      shell: /home/ec2-user/master/osquery.sh
       args:
           executable: /bin/bash

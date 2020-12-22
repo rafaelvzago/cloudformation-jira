@@ -55,7 +55,7 @@
 
 # Retrieve all ips within the stack
     - name: "Run get-stack-ips.sh"
-      shell: /home/ec2-user/scripts/get-stack-ips.sh
+      shell: /home/ec2-user/master/get-stack-ips.sh
       args:
         executable: /bin/bash
 

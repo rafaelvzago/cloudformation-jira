@@ -5,10 +5,19 @@
 image: atlassian/default-image:2
 
 pipelines:
-  default:
-    - parallel:
+  branches:
+   master:
       - step:
-          name: 'Compressing files'
+          name: 'Deploy to S3'
+          deployment: production
           script:
-            - tar -c . | gzip > archive.tar.gz
-            - ls -ltrh
+            - mkdir compressed
+            - tar -zcvf ansible-instance_prep.tar.gz master/  
+            - cp ansible-instance_prep.tar.gz compressed/
+            - pipe: atlassian/aws-s3-deploy:0.3.8
+              variables:
+               AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+               AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+               AWS_DEFAULT_REGION: 'us-east-1'
+               S3_BUCKET: $S3_BUCKET_NAME
+               LOCAL_PATH: 'compressed'

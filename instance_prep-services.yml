@@ -1,6 +1,0 @@
----
-- include: instance_prep-playbooks/general.yml
-- include: instance_prep-playbooks/osquery.yml
-- include: instance_prep-playbooks/postgresql_server.yml
-- include: instance_prep-playbooks/nfs-server.yml
-- include: instance_prep-playbooks/haproxy.yml installation_type=server
