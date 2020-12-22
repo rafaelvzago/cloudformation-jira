@@ -125,77 +125,14 @@ Resources:
             - |
               sudo python -m pip install ansible
             - |
-              aws s3 cp s3://css-training-scripts/instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep-rafael.tar.gz /home/ec2-user/ansible-instance_prep-rafael.tar.gz
             - |
-              tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            #- |
-            #  ansible-playbook /home/ec2-user/master/instance_prep-master.yml
+              tar -zxvf /home/ec2-user/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
+            - |
+              sudo chown -R ec2-user.ec2-user /home/ec2-user
+            - |
+              ansible-playbook /home/ec2-user/master/jira-server.yml
 
-  Node2:
-    Type: AWS::EC2::Instance
-    Properties:
-      SubnetId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - SUBNET
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
-      DisableApiTermination: 'false'
-      InstanceType: m5.large
-      KeyName: !Ref 'userKeyName'
-      BlockDeviceMappings:
-        - DeviceName: /dev/sda1
-          Ebs:
-            VolumeType: gp2
-            VolumeSize: 30
-      IamInstanceProfile: security-osquery
-      SecurityGroupIds:
-        - !Ref 'SecurityGroupNode'
-      Tags:
-        - Key: Name
-          Value: !Join
-            - '-'
-            - - !Ref 'userKeyName'
-              - !Ref 'Ticket'
-              - dc-node-2
-        - Key: resource_owner
-          Value: !Ref 'ResourceOwner'
-        - Key: business_unit
-          Value: !Ref 'BusinessUnit'
-        - Key: cost_allocation
-          Value: !Ref 'BusinessUnit'
-        - Key: power_nap
-          Value: !Ref 'PowerNap'
-        - Key: service_name
-          Value: !Ref 'Ticket'
-        - Key: stackId
-          Value: !Ref 'AWS::StackId'
-        - Key: tgw_environment
-          Value: 'dev'
-      UserData: !Base64 
-        'Fn::Join':
-          - ''
-          - - |
-              #!/bin/bash -xe 
-            - >
-              exec > >(tee /var/log/userdata.log|logger -t user-data -s
-              2>/dev/console) 2>&1
-            - |
-              sudo yum update -y
-            - |
-              curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            - |
-              sudo python get-pip.py
-            - |
-              sudo python -m pip install ansible
-            - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
-            - |
-              tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            #- |
-            #  ansible-playbook /home/ec2-user/scripts/instance_prep-master.yml
 
   ServiceNode:
     Type: AWS::EC2::Instance
@@ -257,9 +194,9 @@ Resources:
             - |
               sudo python -m pip install ansible
             - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep-rafael.tar.gz /home/ec2-user/ansible-instance_prep-rafael.tar.gz
             - |
-              tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
+              tar -zxvf /home/ec2-user/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
             - |
               sudo chown -R ec2-user.ec2-user /home/ec2-user
             - |
