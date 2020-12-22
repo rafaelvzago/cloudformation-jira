@@ -3,4 +3,4 @@
 - include: playbooks/osquery.yml
 - include: playbooks/postgresql_server.yml
 - include: playbooks/nfs-server.yml
-- include: playbooks/haproxy.yml installation_type=server
+- include: playbooks/haproxy.yml installation_type=datacenter
