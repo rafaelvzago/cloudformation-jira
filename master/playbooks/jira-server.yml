@@ -2,9 +2,9 @@
 - name: "Playbook for installing Jira"
   hosts: localhost
   vars:
-    my_version: "{{ version }}-x64" 
+    my_version: "{{ version }}-x64"
   tasks:
-    
+
     - name: "Download Jira Software files"
       get_url:
         url: "{{ item }}"
@@ -12,8 +12,9 @@
         mode: 0755
       loop:
         - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-{{ my_version }}.bin
-    
+
     - name: "Install fontconfig"
+      become: yes
       yum:
         name: fontconfig
         state: present
@@ -22,7 +23,7 @@
       file:
         path: /home/ec2-user/atlassian/application-data/jira
         state: directory
-    
+
     - name: "Jira database setup"
       copy:
         src: /home/ec2-user/master/assets/dbconfig.xml
@@ -34,17 +35,10 @@
     - name: "Jira installation"
       command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/master/assets/response.varfile
 
-    - name: Check all port numbers are accessible from the current host
+    - name: hold until Postgresql is up and running
       wait_for:
-        host: SerivceNode
-        port: "{{ item }}"
-        state: started         # Port should be open
-        delay: 0               # No wait before first check (sec)
-        timeout: 120           # Stop checking after timeout (sec)
-      ignore_errors: yes
-      with_items:
-        - 9000
-        - 5432
+        host: "ServiceNode"
+        port: 5432
 
     - name: "Restoring Sample Data for Jira Server"
       command: pg_restore -h ServiceNode -p 5432 -U postgres -d jira -v "/home/ec2-user/master/assets/jira_server-8-13-1_sample.backup"
@@ -52,6 +46,10 @@
     - name:  "Starting Jira"
       command: /home/ec2-user/atlassian/jira/bin/start-jira.sh
 
+    - name: hold until Postgresql is up and running
+      wait_for:
+        host: "ServiceNode"
+        port: 80
 
-    #- name: "Reindexing Jira"
-      #command: curl -u admin:admin -X POST localhost:8080/rest/api/2/reindex?typeFOREGROUND
+    - name: "Reindexing Jira"
+      command: curl -u admin:admin -X POST localhost:8080/rest/api/2/reindex?typeFOREGROUND
