@@ -200,7 +200,7 @@ Resources:
             - |
               sudo chown -R ec2-user.ec2-user /home/ec2-user
             - |
-              ansible-playbook /home/ec2-user/master/instance_prep-services.yml
+              ansible-playbook /home/ec2-user/master/jira_server_instance_prep-services.yml
 
   SecurityGroupNode:
     Type: AWS::EC2::SecurityGroup
@@ -357,7 +357,7 @@ Resources:
         - RegionMap
         - !Ref 'AWS::Region'
         - VPC
-      GroupDescription: Allow ssh-22 inbound on rfc1918 only + PostgreSQL-5432 + HAproxy-80 + NFS-2049_111 + Mountd-20000
+      GroupDescription: Allow ssh-22 inbound on rfc1918 only + PostgreSQL-5432 + HAproxy-80 + HAproxy-9000 + NFS-2049_111 + Mountd-20000
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
