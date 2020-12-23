@@ -125,14 +125,81 @@ Resources:
             - |
               sudo python -m pip install ansible
             - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep-rafael.tar.gz /home/ec2-user/ansible-instance_prep-rafael.tar.gz
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
             - |
-              tar -zxvf /home/ec2-user/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
+              tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
             - |
               sudo chown -R ec2-user.ec2-user /home/ec2-user
             - |
-              ansible-playbook /home/ec2-user/master/jira_server_instance_prep.yml
+              ansible-playbook /home/ec2-user/master/instance_prep-products.yml
 
+  Node2:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - SUBNET
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      DisableApiTermination: 'false'
+      InstanceType: m5.large
+      KeyName: !Ref 'userKeyName'
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 30
+      IamInstanceProfile: security-osquery
+      SecurityGroupIds:
+        - !Ref 'SecurityGroupNode'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref 'userKeyName'
+              - !Ref 'Ticket'
+              - dc-node-2
+        - Key: resource_owner
+          Value: !Ref 'ResourceOwner'
+        - Key: business_unit
+          Value: !Ref 'BusinessUnit'
+        - Key: cost_allocation
+          Value: !Ref 'BusinessUnit'
+        - Key: power_nap
+          Value: !Ref 'PowerNap'
+        - Key: service_name
+          Value: !Ref 'Ticket'
+        - Key: stackId
+          Value: !Ref 'AWS::StackId'
+        - Key: tgw_environment
+          Value: 'dev'
+      UserData: !Base64 
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash -xe 
+            - >
+              exec > >(tee /var/log/userdata.log|logger -t user-data -s
+              2>/dev/console) 2>&1
+            - |
+              sudo yum update -y
+            - |
+              curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            - |
+              sudo python get-pip.py
+            - |
+              sudo python -m pip install ansible
+            - |
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
+            - |
+              tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
+            - |
+              sudo chown -R ec2-user.ec2-user /home/ec2-user
+            #- |
+            #  ansible-playbook /home/ec2-user/scripts/instance_prep-products.yml
 
   ServiceNode:
     Type: AWS::EC2::Instance
@@ -194,9 +261,9 @@ Resources:
             - |
               sudo python -m pip install ansible
             - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep-rafael.tar.gz /home/ec2-user/ansible-instance_prep-rafael.tar.gz
+              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
             - |
-              tar -zxvf /home/ec2-user/ansible-instance_prep-rafael.tar.gz -C /home/ec2-user/
+              tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
             - |
               sudo chown -R ec2-user.ec2-user /home/ec2-user
             - |
@@ -209,7 +276,7 @@ Resources:
         - RegionMap
         - !Ref 'AWS::Region'
         - VPC
-      GroupDescription: Allow ssh-22 inbound on rfc1918 only + Jira-8080 + Ehcache-40001_40011 + Confluence-8090 + Synchrony-8091 + Hazelcast_5801_5701_25500_54237 + Crowd_8095 + NFS-2049_111 + Mountd-20000
+      GroupDescription: ssh-22+ SMTP-25+ Jira-8080+ Ehcache-40001_40011+ Confluence-8090+ Synchrony-8091+ Hazelcast-5801_5701_25500_54237+ Crowd-8095+ Bamboo-8085_54663+ Bitbucket-7990_7999_7992_7993_9200_5701 + FeCru-8060 + NFS-2049_111 + Mountd-20000
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -227,6 +294,10 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 172.31.0.0/16
+        - IpProtocol: tcp
+          FromPort: 25
+          ToPort: 25
+          CidrIp: 10.0.0.0/8
         - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
@@ -335,20 +406,126 @@ Resources:
           FromPort: 8095
           ToPort: 8095
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 8085
+          ToPort: 8085
           CidrIp: 10.0.0.0/8
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 8085
+          ToPort: 8085
           CidrIp: 172.16.0.0/12
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 8085
+          ToPort: 8085
           CidrIp: 192.168.0.0/16
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 8085
+          ToPort: 8085
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+        - IpProtocol: tcp
+          FromPort: 7999
+          ToPort: 7999
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7999
+          ToPort: 7999
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7999
+          ToPort: 7999
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 7999
+          ToPort: 7999
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+
 
   SecurityGroupServiceNode:
     Type: AWS::EC2::SecurityGroup
@@ -357,7 +534,7 @@ Resources:
         - RegionMap
         - !Ref 'AWS::Region'
         - VPC
-      GroupDescription: Allow ssh-22 inbound on rfc1918 only + PostgreSQL-5432 + HAproxy-80 + HAproxy-9000 + NFS-2049_111 + Mountd-20000
+      GroupDescription: Allow ssh-22 inbound on rfc1918 only + SMTP-mail_25 + PostgreSQL-5432 + HAproxy-80_9000 + SSL_443 + NFS-2049_111 + Mountd-20000
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -376,9 +553,29 @@ Resources:
           ToPort: 22
           CidrIp: 172.31.0.0/16
         - IpProtocol: tcp
+          FromPort: 25
+          ToPort: 25
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
           CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 172.31.0.0/16
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
@@ -396,6 +593,21 @@ Resources:
           ToPort: 80
           CidrIp: 172.31.0.0/16
         - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+        - IpProtocol: tcp
           FromPort: 2049
           ToPort: 2049
           CidrIp: 10.0.0.0/8
@@ -411,18 +623,3 @@ Resources:
           FromPort: 20000
           ToPort: 20000
           CidrIp: 10.0.0.0/8
-        - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
-          CidrIp: 10.0.0.0/8
-        - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
-          CidrIp: 172.16.0.0/12
-        - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
-          CidrIp: 192.168.0.0/16
-        - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
