@@ -7,6 +7,8 @@
   tasks:
     
     - name: "Install fontconfig"
+      become: yes
+      become_user: root
       yum:
         name: fontconfig
         state: present
@@ -31,7 +33,66 @@
         dest: /home/ec2-user/atlassian
         remote_src: yes
         list_files: yes
-      register: archive_contents
+#        creates: /home/ec2-user/atlassian/atlassian-bitbucket-7.6.2/bin
+      register: bb_archive_contents
       
     - debug:
-        msg: "{{ archive_contents.files[0].split('/')[0] }}"
+        msg: "{{ bb_archive_contents.files[0].split('/')[0] }}"
+    
+    - name: Set JRE home
+      lineinfile:
+        path: /home/ec2-user/atlassian/{{ bb_archive_contents.files[0].split('/')[0] }}/bin/set-jre-home.sh
+        regexp: 'JRE_HOME="/etc/alternatives/jre"'
+        line: 'JRE_HOME="/etc/alternatives/jre"'
+        insertbefore: BOF
+        
+    - name: Create bitbucket home
+      file:
+        path: /home/ec2-user/atlassian/local-home/{{ bb_archive_contents.files[0].split('/')[0] }}
+        state: directory
+        mode: 0755
+      register: bb_home
+    
+    - debug:
+        msg: "{{ bb_home.path }}"
+          
+    - name: Set bitbucket home
+      lineinfile:
+        path: /home/ec2-user/atlassian/{{ bb_archive_contents.files[0].split('/')[0] }}/bin/set-bitbucket-home.sh
+        regexp: 'BITBUCKET_HOME="{{ bb_home.path }}"'
+        line: 'BITBUCKET_HOME="{{ bb_home.path }}"'
+        insertbefore: BOF
+    
+    - name: Create bitbucket home shared directory
+      file:
+        path: '{{ bb_home.path }}/shared'
+        state: directory
+        mode: 0755  
+    
+    - name: Ensure the bitbucket.properties file exists
+      copy:
+        content: ""
+        dest: '{{ bb_home.path }}/shared/bitbucket.properties'
+        force: no
+    
+    - name: Ensure configurations are set in bitbucket.properties
+      blockinfile:
+        path: '{{ bb_home.path }}/shared/bitbucket.properties'
+        block: |
+          jdbc.driver=org.postgresql.Driver
+          jdbc.url=jdbc:postgresql://ServiceNode:5432/bitbucket?targetServerType=master
+          jdbc.user=atlassian
+          jdbc.password=atlassian
+          setup.license=AAABpQ0ODAoPeNp1UVtv0zAYffev+CTeKjltPcqgUiRYYtDQSKo2QeL24DpfW0NiR76E9d/jLRnjolnyi4/O8bk8qwJCjhIYA3axXi3WbAV1lQFbsAUpQrdHWx5qh9aly0U8JDPaC+kL0WGai0E1xHnhTsmNkqgdVuceR4x/5Dflhm//x//ANsHKk3CYC4/p3Z90yShj5Gm1CeG3vbLnB9pyok3m+Aeh2rSJyvq18K1wTgmdSNORHdoB7XWeXvFLTp/nnxl9Ub6/pO8uXr2cjEZNkaH2aFNvA5Jd2DtpVe+V0ePLbDYryoq+Lbd0sy3zOquuy4LWOx6BNLMYTTWwP4M/IUx2gWtpGrTQW/MdpYcvJ+/7r+v5/GiSvyzO25FBcWR8SyA3oI2HRjlv1T54jMrKgTcgg/Omi+MkJEaOnrXQ8oluxnSxHTXg7xzZlr+peE6vPt15H/ecLMeSav1Dm5+a7HiRxktXcf/SHoVWTtzXwW9F17cImel6oc/kPnwE/p0zx8cKK3QeppBwMLGSNhyVhgYHbE0fwxA+iDaMPxxE65D8Am0s4mkwLgIVAIzgpBxQmaTzocx3t2bzJytcdW4LAhUAhMWshYSI74+3Qozoa7b8Q6ts4e4=X02kc
+          setup.sysadmin.username=admin
+          setup.sysadmin.password=admin
+          setup.sysadmin.displayName=admin
+          setup.sysadmin.emailAddress=sysadmin@yourcompany.com
+    
+    - name: Create empty database
+      shell: createdb -h ServiceNode -Uatlassian bitbucket
+  
+    - name: Start Bitbucket
+      shell: /home/ec2-user/atlassian/{{ bb_archive_contents.files[0].split('/')[0] }}/bin/start-bitbucket.sh
+      args:
+        executable: /bin/bash
