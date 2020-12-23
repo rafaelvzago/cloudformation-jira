@@ -410,8 +410,17 @@ Resources:
           ToPort: 9000
           CidrIp: 192.168.0.0/16
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 192.168.0.0/16
 
   SecurityGroupServiceNode:
     Type: AWS::EC2::SecurityGroup
@@ -487,5 +496,14 @@ Resources:
           ToPort: 9000
           CidrIp: 192.168.0.0/16
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 192.168.0.0/16
