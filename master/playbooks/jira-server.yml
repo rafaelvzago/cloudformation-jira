@@ -30,26 +30,38 @@
         dest: /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
 
     - name: "Changing the IP address to the instance database"
-      command: sed -i 's/localhost:5432/ServiceNode:5432/' /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
+      replace:
+        path: /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
+        regexp: "localhost:5432"
+        replace: "ServiceNode:5432"
 
     - name: "Jira installation"
       command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/master/assets/response.varfile
 
-    - name: hold until Postgresql is up and running
+    - name: "Hold until Postgresql is up and running"
       wait_for:
         host: "ServiceNode"
         port: 5432
 
     - name: "Restoring Sample Data for Jira Server"
-      command: pg_restore -h ServiceNode -p 5432 -U postgres -d jira -v "/home/ec2-user/master/assets/jira_server-8-13-1_sample.backup"
+      command: pg_restore -h ServiceNode -p 5432 -U postgres -d jira "/home/ec2-user/master/assets/jira_server-8-13-1_sample.backup"
 
     - name:  "Starting Jira"
       command: /home/ec2-user/atlassian/jira/bin/start-jira.sh
 
-    - name: hold until Postgresql is up and running
-      wait_for:
-        host: "ServiceNode"
-        port: 80
+    - name: "Waiting the instance to be ready"
+      uri:
+        url: "http://Node1:8080/status"
+        method: GET
+        return_content: yes
+        headers:
+          Content-Type: "application/json"
+      ignore_errors: true
+      register: result
+      until: result.json.state == "RUNNING"
+      retries: 30
+      delay: 10
 
     - name: "Reindexing Jira"
       command: curl -u admin:admin -X POST localhost:8080/rest/api/2/reindex?typeFOREGROUND
+
