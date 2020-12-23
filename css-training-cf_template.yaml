@@ -272,7 +272,7 @@ Resources:
         - RegionMap
         - !Ref 'AWS::Region'
         - VPC
-      GroupDescription: Allow ssh-22 inbound on rfc1918 only + Jira-8080 + Ehcache-40001_40011 + Confluence-8090 + Synchrony-8091 + Hazelcast_5801_5701_25500_54237 + Crowd_8095 + NFS-2049_111 + Mountd-20000
+      GroupDescription: Allow ssh-22 inbound on rfc1918 only + SMTP-mail_25 + Jira-8080 + Ehcache-40001_40011 + Confluence-8090 + Synchrony-8091 + Hazelcast_5801_5701_25500_54237 + Crowd_8095 + Bamboo+8085_54663 + Bitbucket_7990_7999_7992_7993_9200_5701 + FishEye/Crucible_8060 + NFS-2049_111 + Mountd-20000
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -290,6 +290,10 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 172.31.0.0/16
+        - IpProtocol: tcp
+          FromPort: 25
+          ToPort: 25
+          CidrIp: 10.0.0.0/8
         - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
@@ -398,29 +402,126 @@ Resources:
           FromPort: 8095
           ToPort: 8095
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 8085
+          ToPort: 8085
           CidrIp: 10.0.0.0/8
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 8085
+          ToPort: 8085
           CidrIp: 172.16.0.0/12
         - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
+          FromPort: 8085
+          ToPort: 8085
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 8085
+          ToPort: 8085
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 54663
+          ToPort: 54663
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7990
+          ToPort: 7990
           CidrIp: 192.168.0.0/16
         - IpProtocol: tcp
           FromPort: 7990
           ToPort: 7990
+        - IpProtocol: tcp
+          FromPort: 7999
+          ToPort: 7999
           CidrIp: 10.0.0.0/8
         - IpProtocol: tcp
-          FromPort: 7990
-          ToPort: 7990
+          FromPort: 7999
+          ToPort: 7999
           CidrIp: 172.16.0.0/12
         - IpProtocol: tcp
-          FromPort: 7990
-          ToPort: 7990
+          FromPort: 7999
+          ToPort: 7999
           CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 7999
+          ToPort: 7999
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 7992
+          ToPort: 7992
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 7993
+          ToPort: 7993
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 9200
+          ToPort: 9200
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 8060
+          ToPort: 8060
+
 
   SecurityGroupServiceNode:
     Type: AWS::EC2::SecurityGroup
@@ -429,7 +530,7 @@ Resources:
         - RegionMap
         - !Ref 'AWS::Region'
         - VPC
-      GroupDescription: Allow ssh-22 inbound on rfc1918 only + PostgreSQL-5432 + HAproxy-80 + NFS-2049_111 + Mountd-20000
+      GroupDescription: Allow ssh-22 inbound on rfc1918 only + SMTP-mail_25 + PostgreSQL-5432 + HAproxy-80_9000 + SSL_443 + NFS-2049_111 + Mountd-20000
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -448,9 +549,29 @@ Resources:
           ToPort: 22
           CidrIp: 172.31.0.0/16
         - IpProtocol: tcp
+          FromPort: 25
+          ToPort: 25
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
           CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 172.31.0.0/16
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
@@ -468,6 +589,21 @@ Resources:
           ToPort: 80
           CidrIp: 172.31.0.0/16
         - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+        - IpProtocol: tcp
           FromPort: 2049
           ToPort: 2049
           CidrIp: 10.0.0.0/8
@@ -483,27 +619,3 @@ Resources:
           FromPort: 20000
           ToPort: 20000
           CidrIp: 10.0.0.0/8
-        - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
-          CidrIp: 10.0.0.0/8
-        - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
-          CidrIp: 172.16.0.0/12
-        - IpProtocol: tcp
-          FromPort: 9000
-          ToPort: 9000
-          CidrIp: 192.168.0.0/16
-        - IpProtocol: tcp
-          FromPort: 7990
-          ToPort: 7990
-          CidrIp: 10.0.0.0/8
-        - IpProtocol: tcp
-          FromPort: 7990
-          ToPort: 7990
-          CidrIp: 172.16.0.0/12
-        - IpProtocol: tcp
-          FromPort: 7990
-          ToPort: 7990
-          CidrIp: 192.168.0.0/16
