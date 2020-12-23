@@ -36,6 +36,8 @@
         replace: "ServiceNode:5432"
 
     - name: "Jira installation"
+      become: yes
+      become_user: ec2-user
       command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/master/assets/response.varfile
 
     - name: "Hold until Postgresql is up and running"
