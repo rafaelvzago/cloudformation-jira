@@ -7,10 +7,6 @@
     installation_type: "{{ installattion_type }}"
 
   tasks:
-    - name: Install the 'Development tools' package group
-      yum:
-        name: "@Development tools"
-        state: present
 
     - name: "Install HAproxy"
       yum:

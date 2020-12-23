@@ -2,9 +2,9 @@
 - name: "Playbook to mount shared NFS storage"
   hosts: localhost
   become: yes
-  
+
   tasks:
-    
+
     - name: "Create shared location for mounting"
       file:
         path: /home/ec2-user/atlassian/shared-home
@@ -12,8 +12,11 @@
         owner: ec2-user
         group: root
         mode: 0755
-        
-    - name: "Run command to mount"
-      shell: 'sudo mount -t nfs ServiceNode:/var/atlassian/application-data/shared-home /home/ec2-user/atlassian/shared-home'
-      args:
-        executable: /bin/bash  
+
+    - name: Mount a NFS volume
+      ansible.posix.mount:
+        src: ServiceNode:/var/atlassian/application-data/shared-home
+        path: /home/ec2-user/atlassian/shared-home
+        opts: rw,sync,hard,intr
+        state: mounted
+        fstype: nfs

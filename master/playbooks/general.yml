@@ -14,12 +14,47 @@
         state: directory
         mode: 0755
 
+# Create local-home directory for Atlassian products
+    - name: "Create local-home directory"
+      become: yes
+      become_user: ec2-user
+      file:
+        path: /home/ec2-user/atlassian/local-home
+        state: directory
+        mode: 0755
+
 # yum update
     - name: Upgrade all packages, excluding kernel related packages
       yum:
         name: '*'
         state: latest
         exclude: kernel*
+
+    - name: Install the 'Development tools' package group
+      yum:
+        name: "@Development tools"
+        state: present
+
+# Install Java, to swtich use:  sudo alternatives --config java
+    - name: Install Java OpenJDK 11
+      shell: amazon-linux-extras install java-openjdk11
+      args:
+        creates: /usr/lib/jvm/jre-11-openjdk-11.0.7.10-4.amzn2.0.1.x86_64/bin/java
+        
+    - name: Install Java OpenJDK 8
+      yum:
+        name: "java-1.8.0-openjdk"
+        state: present
+    
+    - name: Ensure that JRE_HOME and JAVA_HOME is in .bashrc
+      become: yes
+      become_user: ec2-user
+      blockinfile:
+        path: /home/ec2-user/.bashrc
+        block: |
+          # Set JRE_HOME and JAVA_HOME
+          export JRE_HOME="/etc/alternatives/jre"
+          export JAVA_HOME="/etc/alternatives/jre"
 
 # Needed to make use of ansible "expect" module    
     - name: "Install pexpect"
