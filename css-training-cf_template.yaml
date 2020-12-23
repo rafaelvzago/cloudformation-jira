@@ -131,7 +131,7 @@ Resources:
             - |
               sudo chown -R ec2-user.ec2-user /home/ec2-user
             - |
-              ansible-playbook /home/ec2-user/master/jira-server_instance_prep.yml
+              ansible-playbook /home/ec2-user/master/jira_server_instance_prep.yml
 
 
   ServiceNode:
