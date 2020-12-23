@@ -35,7 +35,7 @@
         name: "@Development tools"
         state: present
 
-# Install Java, to swtich use: alternatives --config java
+# Install Java, to swtich use:  sudo alternatives --config java
     - name: Install Java OpenJDK 11
       shell: amazon-linux-extras install java-openjdk11
       args:
@@ -45,6 +45,16 @@
       yum:
         name: "java-1.8.0-openjdk"
         state: present
+    
+    - name: Ensure that JRE_HOME and JAVA_HOME is in .bashrc
+      become: yes
+      become_user: ec2-user
+      blockinfile:
+        path: /home/ec2-user/.bashrc
+        block: |
+          # Set JRE_HOME and JAVA_HOME
+          export JRE_HOME="/etc/alternatives/jre"
+          export JAVA_HOME="/etc/alternatives/jre"
 
 # Needed to make use of ansible "expect" module    
     - name: "Install pexpect"
