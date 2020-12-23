@@ -272,7 +272,7 @@ Resources:
         - RegionMap
         - !Ref 'AWS::Region'
         - VPC
-      GroupDescription: Allow ssh-22 inbound on rfc1918 only + SMTP-mail_25 + Jira-8080 + Ehcache-40001_40011 + Confluence-8090 + Synchrony-8091 + Hazelcast_5801_5701_25500_54237 + Crowd_8095 + Bamboo+8085_54663 + Bitbucket_7990_7999_7992_7993_9200_5701 + FishEye/Crucible_8060 + NFS-2049_111 + Mountd-20000
+      GroupDescription: ssh-22+ SMTP-25+ Jira-8080+ Ehcache-40001_40011+ Confluence-8090+ Synchrony-8091+ Hazelcast-5801_5701_25500_54237+ Crowd-8095+ Bamboo-8085_54663+ Bitbucket-7990_7999_7992_7993_9200_5701 + FeCru-8060 + NFS-2049_111 + Mountd-20000
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
