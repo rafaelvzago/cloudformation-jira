@@ -1,5 +1,36 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: DC Intro training
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Deployment Information
+        Parameters:
+          - Ticket
+          - ResourceOwner
+          - userKeyName
+          - BusinessUnit
+          - PowerNap
+      - Label:
+          default: Training Module Information
+        Parameters:
+          - AtlProduct
+          - TrainingModule
+    ParameterLabels:
+      userKeyName:
+        default: userKeyName
+      BusinessUnit:
+        default: BusinessUnit
+      ResourceOwner:
+        default: ResourceOwner
+      Ticket:
+        default: Ticket
+      PowerNap:
+        default: PowerNap
+      AtlProduct:
+        default: Atlassian Product
+      TrainingModule:
+        default: Training Module
 Parameters:
   userKeyName:
     Type: AWS::EC2::KeyPair::KeyName
@@ -56,6 +87,18 @@ Parameters:
       - '2880'
       - '4320'
       - '5760'
+  AtlProduct:
+    Type: String
+    AllowedValues:
+      - jira
+      - confluence
+      - bitbucket
+  TrainingModule:
+    Type: String
+    AllowedValues:
+      - '1'
+      - '2'
+      - '3'
 
 Mappings:
   RegionMap:
@@ -108,30 +151,27 @@ Resources:
           Value: !Ref 'AWS::StackId'
         - Key: tgw_environment
           Value: 'dev'
-      UserData: !Base64 
-        'Fn::Join':
-          - ''
-          - - |
-              #!/bin/bash -xe 
-            - >
-              exec > >(tee /var/log/userdata.log|logger -t user-data -s
-              2>/dev/console) 2>&1
-            - |
-              sudo yum update -y
-            - |
-              curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            - |
-              sudo python get-pip.py
-            - |
-              sudo python -m pip install ansible
-            - |
-              aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
-            - |
-              sudo chown -R ec2-user.ec2-user /home/ec2-user
-            - |
-              tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            - |
-              ansible-playbook /home/ec2-user/master/instance_prep-products.yml
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe 
+            exec > >(tee /var/log/userdata.log|logger -t user-data -s
+            2>/dev/console) 2>&1
+            cat <<EOT >> /home/ec2-user/.bashrc
+            export JRE_HOME="/etc/alternatives/jre"
+            export JAVA_HOME="/etc/alternatives/jre"
+            export ATL_PRODUCT=${AtlProduct}
+            export TRAINING_MODULE=${TrainingModule}
+            EOT
+            source /home/ec2-user/.bashrc
+            sudo yum update -y
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            sudo python get-pip.py
+            sudo python -m pip install ansible
+            aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
+            sudo chown -R ec2-user.ec2-user /home/ec2-user
+            tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
+            ansible-playbook /home/ec2-user/master/instance_prep-products.yml
 
   Node2:
     Type: AWS::EC2::Instance
@@ -186,17 +226,11 @@ Resources:
               2>/dev/console) 2>&1
             - |
               sudo yum update -y
-            - |
               curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            - |
               sudo python get-pip.py
-            - |
               sudo python -m pip install ansible
-            - |
               aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
-            - |
               tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            #- |
             #  ansible-playbook /home/ec2-user/scripts/instance_prep-products.yml
 
   ServiceNode:
@@ -252,19 +286,12 @@ Resources:
               2>/dev/console) 2>&1
             - |
               sudo yum update -y
-            - |
               curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            - |
               sudo python get-pip.py
-            - |
               sudo python -m pip install ansible
-            - |
               aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
-            - |
               tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            - |
               sudo chown -R ec2-user.ec2-user /home/ec2-user
-            - |
               ansible-playbook /home/ec2-user/master/instance_prep-services.yml
 
   SecurityGroupNode:
