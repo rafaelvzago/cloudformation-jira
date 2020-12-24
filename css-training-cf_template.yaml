@@ -155,8 +155,10 @@ Resources:
         Fn::Base64:
           !Sub |
             #!/bin/bash -xe 
+            # Implement logging for userdata
             exec > >(tee /var/log/userdata.log|logger -t user-data -s
             2>/dev/console) 2>&1
+            # Set env variables
             cat <<EOT >> /home/ec2-user/.bashrc
             export JRE_HOME="/etc/alternatives/jre"
             export JAVA_HOME="/etc/alternatives/jre"
@@ -164,10 +166,12 @@ Resources:
             export TRAINING_MODULE=${TrainingModule}
             EOT
             source /home/ec2-user/.bashrc
+            # yum update and install ansible
             sudo yum update -y
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
             sudo python get-pip.py
             sudo python -m pip install ansible
+            # download and run ansible playbooks
             aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
             sudo chown -R ec2-user.ec2-user /home/ec2-user
             tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
