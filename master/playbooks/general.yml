@@ -45,16 +45,6 @@
       yum:
         name: "java-1.8.0-openjdk"
         state: present
-    
-    - name: Ensure that JRE_HOME and JAVA_HOME is in .bashrc
-      become: yes
-      become_user: ec2-user
-      blockinfile:
-        path: /home/ec2-user/.bashrc
-        block: |
-          # Set JRE_HOME and JAVA_HOME
-          export JRE_HOME="/etc/alternatives/jre"
-          export JAVA_HOME="/etc/alternatives/jre"
 
 # Needed to make use of ansible "expect" module    
     - name: "Install pexpect"
