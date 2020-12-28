@@ -1,0 +1,84 @@
+---
+- name: "Playbook for installing Jira"
+  hosts: localhost
+  vars:
+    my_version: "{{ version }}-x64"
+  tasks:
+
+    - name: "Download Jira Software files"
+      get_url:
+        url: "{{ item }}"
+        dest: /home/ec2-user/downloads/
+        mode: 0755
+      loop:
+        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-{{ my_version }}.bin
+
+    - name: "Install fontconfig"
+      become: yes
+      yum:
+        name: fontconfig
+        state: present
+
+    - name: Creating Jira  directory
+      file:
+        path: /home/ec2-user/atlassian/application-data/jira
+        state: directory
+
+    - name: "Jira database setup"
+      copy:
+        src: /home/ec2-user/master/assets/dbconfig.xml
+        dest: /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
+
+    - name: "Changing the IP address to the instance database"
+      replace:
+        path: /home/ec2-user/atlassian/application-data/jira/dbconfig.xml
+        regexp: "localhost:5432"
+        replace: "ServiceNode:5432"
+
+    - name: "Jira installation"
+      become: yes
+      become_user: ec2-user
+      command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/master/assets/response.varfile
+
+    - name: "Hold until Postgresql is up and running"
+      wait_for:
+        host: "ServiceNode"
+        port: 5432
+
+    - name: "Restoring Sample Data for Jira Datacenter"
+      command: pg_restore -h ServiceNode -p 5432 -U postgres -d jira "/home/ec2-user/master/assets/jira_dc-8-13-1_sample.backup"
+
+    - name: "Jira cluster setup"
+      copy:
+        src: /home/ec2-user/master/assets/jira_cluster.properties
+        dest: /home/ec2-user/atlassian/application-data/jira/cluster.properties
+
+    - name: "Changing node ID {{ ansible_hostname }}"
+      replace:
+        path: /home/ec2-user/atlassian/application-data/jira/cluster.properties
+        regexp: "CLUSTERID"
+        replace: "{{ ansible_hostname }}" 
+
+    - name:  "Starting Jira"
+      command: /home/ec2-user/atlassian/jira/bin/start-jira.sh
+
+    - name: Sleep for 300 seconds and continue with play
+      wait_for:
+        timeout: 600
+      delegate_to: localhost
+
+    - name: "Waiting the instance to be ready"
+      uri:
+        url: "http://Node1:8080/status"
+        method: GET
+        return_content: yes
+        headers:
+          Content-Type: "application/json"
+      ignore_errors: true
+      register: result
+      until: result.json.state == "RUNNING"
+      retries: 30
+      delay: 10
+
+    - name: "Reindexing Jira"
+      command: curl -u admin:admin -X POST localhost:8080/rest/api/2/reindex

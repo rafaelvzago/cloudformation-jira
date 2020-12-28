@@ -3,4 +3,13 @@
 - include: playbooks/osquery.yml
 - include: playbooks/postgresql_client.yml
 - include: playbooks/mount-shared.yml
-- include: playbooks/jira-server.yml version=8.13.1
+- name: "Installing Products"
+  hosts: localhost
+  vars:
+    product: "{{ product }}"
+    installation_type: "{{ type }}"
+  tasks:
+    - name: "Installing datacenter"
+      include: playbooks/jira-datacenter.yml
+      when: (product == "jira" and installation_type == "datacenter")
+
