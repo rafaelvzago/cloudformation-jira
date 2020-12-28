@@ -1,8 +1,6 @@
 ---
 - name: "Playbook for installing Jira"
   hosts: localhost
-  vars:
-    my_version: "{{ version }}-x64"
   tasks:
 
     - name: "Download Jira Software files"
@@ -11,7 +9,7 @@
         dest: /home/ec2-user/downloads/
         mode: 0755
       loop:
-        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-{{ my_version }}.bin
+        - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-8.13.1-x64.bin
 
     - name: "Install fontconfig"
       become: yes
@@ -38,7 +36,7 @@
     - name: "Jira installation"
       become: yes
       become_user: ec2-user
-      command: /home/ec2-user/downloads/atlassian-jira-software-{{ my_version }}.bin -q -varfile /home/ec2-user/master/assets/response.varfile
+      command: /home/ec2-user/downloads/atlassian-jira-software-8.13.1-x64.bin -q -varfile /home/ec2-user/master/assets/response.varfile
 
     - name: "Hold until Postgresql is up and running"
       wait_for:
