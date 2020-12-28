@@ -175,7 +175,7 @@ Resources:
             aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
             sudo chown -R ec2-user.ec2-user /home/ec2-user
             tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            ansible-playbook /home/ec2-user/master/instance_prep-products.yml
+            ansible-playbook -e 'jira_server=True' /home/ec2-user/master/instance_prep-products.yml
 
   Node2:
     Type: AWS::EC2::Instance
@@ -236,7 +236,7 @@ Resources:
               aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
               tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
               sudo chown ec2-user.ec2-user /home/ec2-user
-              #ansible-playbook /home/ec2-user/scripts/instance_prep-products.yml --extra-vars '{"installation_type":"datacenter"}'
+              ansible-playbook -e 'jira_datacenter=True' /home/ec2-user/scripts/instance_prep-products.yml 
 
   ServiceNode:
     Type: AWS::EC2::Instance
