@@ -4,6 +4,12 @@
 #   vars_files:
 #    - /home/ec2-user/master/group_vars/cf_node_var.yml
 
+downloads_path: "/home/ec2-user/downloads"
+atl_local_home: "/home/ec2-user/atlassian/local-home"
+service_nfs_dir: "/var/atlassian/application-data/shared-home"
+node_shared_home: "/home/ec2-user/atlassian/shared-home"
+
+# Pulled from env
 atl_product: "{{ lookup('env', 'ATL_PRODUCT') or 'jira' }}"
 atl_product_type: "{{ lookup('env', 'ATL_PRODUCT_TYPE') or 'server' }}"
 training_module: "{{ lookup('env', 'TRAINING_MODULE') or '1' }}"
