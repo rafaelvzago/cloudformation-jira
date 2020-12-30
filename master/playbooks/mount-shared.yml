@@ -2,6 +2,8 @@
 - name: "Playbook to mount shared NFS storage"
   hosts: localhost
   become: yes
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
 
   tasks:
 
@@ -13,10 +15,10 @@
         group: root
         mode: 0755
 
-    - name: Mount a NFS volume
+    - name: "Mount a NFS volume as shared home"
       ansible.posix.mount:
-        src: ServiceNode:/var/atlassian/application-data/shared-home
-        path: /home/ec2-user/atlassian/shared-home
+        src: 'ServiceNode:{{ service_nfs_dir }}'
+        path: ' {{ node_shared_home }}'
         opts: rw,sync,hard,intr
         state: mounted
         fstype: nfs
