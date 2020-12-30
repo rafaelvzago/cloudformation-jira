@@ -3,4 +3,7 @@
 - include: playbooks/osquery.yml
 - include: playbooks/postgresql_client.yml
 - include: playbooks/mount-shared.yml
-- include: playbooks/jira-server.yml version=8.13.1
+- import_playbook: playbooks/jira-datacenter.yml
+  when: jira_datacenter | default(False) | bool
+- import_playbook: playbooks/jira-server.yml
+  when: jira_server | default(False) | bool

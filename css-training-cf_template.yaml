@@ -189,7 +189,7 @@ Resources:
             aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
             sudo chown -R ec2-user.ec2-user /home/ec2-user
             tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            ansible-playbook /home/ec2-user/master/instance_prep-products.yml
+            ansible-playbook -e '${AtlProduct}_${AtlProductType}=True' /home/ec2-user/master/instance_prep-products.yml
 
   Node2:
     Type: AWS::EC2::Instance
