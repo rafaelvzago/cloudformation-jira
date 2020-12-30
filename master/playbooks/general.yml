@@ -2,8 +2,21 @@
 - name: "Playbook for general preparation"
   hosts: localhost
   become: yes
-  
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
+
   tasks:
+    - name: Print variables information
+      vars: 
+        msg: |
+            atl_product: {{ atl_product }}
+            atl_product_type: {{ atl_product_type }}
+            training_module: {{ training_module }}
+            jre_home: {{ jre_home }}
+            java_home: {{ java_home }}
+      debug: 
+        msg: "{{ msg.split('\n') }}"
+      tags: debug_info
 
 # Central location for all downloads    
     - name: "Create downloads directory"
