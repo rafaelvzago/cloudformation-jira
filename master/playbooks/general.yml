@@ -23,7 +23,7 @@
       become: yes
       become_user: ec2-user
       file:
-        path: /home/ec2-user/downloads
+        path: '{{ downloads_path }}'
         state: directory
         mode: 0755
 
@@ -32,7 +32,7 @@
       become: yes
       become_user: ec2-user
       file:
-        path: /home/ec2-user/atlassian/local-home
+        path: '{{ atl_local_home }}'
         state: directory
         mode: 0755
 
