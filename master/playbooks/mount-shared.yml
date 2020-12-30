@@ -18,7 +18,7 @@
     - name: "Mount a NFS volume as shared home"
       ansible.posix.mount:
         src: 'ServiceNode:{{ service_nfs_dir }}'
-        path: ' {{ node_shared_home }}'
+        path: '{{ node_shared_home }}'
         opts: rw,sync,hard,intr
         state: mounted
         fstype: nfs
