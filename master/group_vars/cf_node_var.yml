@@ -1,0 +1,11 @@
+---
+# File for storing all variable defaults and importing variables from the environment.
+# To import, Add the following lines to top of playbooks:
+#   vars_files:
+#    - /home/ec2-user/master/group_vars/cf_node_var.yml
+
+atl_product: "{{ lookup('env', 'ATL_PRODUCT') or 'jira' }}"
+atl_product_type: "{{ lookup('env', 'ATL_PRODUCT_TYPE') or 'server' }}"
+training_module: "{{ lookup('env', 'TRAINING_MODULE') or '1' }}"
+jre_home: "{{ lookup('env', 'JRE_HOME') }}"
+java_home: "{{ lookup('env', 'JAVA_HOME') }}"
