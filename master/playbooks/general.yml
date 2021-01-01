@@ -28,11 +28,11 @@
         mode: 0755
 
 # Create local-home directory for Atlassian products
-    - name: "Create local-home directory"
+    - name: "Create atlassian application-data directory"
       become: yes
       become_user: ec2-user
       file:
-        path: '{{ atl_local_home }}'
+        path: '{{ atl_app_data_dir }}'
         state: directory
         mode: 0755
 

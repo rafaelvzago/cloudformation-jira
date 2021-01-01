@@ -1,0 +1,61 @@
+---
+- name: "Playbook for Restoring sample data for Jira"
+  hosts: localhost
+  become: yes
+  become_user: ec2-user
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
+    
+  tasks:
+    
+    - name: "Wait until Postgresql is up and running"
+      wait_for:
+        host: "ServiceNode"
+        port: 5432
+    
+    - name: "Check if the jira database already exists"
+      shell: psql -h Servicenode -U postgres -l | grep jira
+      ignore_errors: true
+      register: db_exists
+    
+    - debug: var=db_exists
+    
+    - name: "Check if jira database exists"
+      command: createdb -h ServiceNode -U postgres jira
+      when: db_exists.failed
+    
+    - name: "Check if jira database is empty"
+      shell: psql -h ServiceNode -U postgres -qAt jira -c "select 1 from information_schema.tables where table_schema = 'public' and table_name = 'jiraissue';"
+      ignore_errors: true
+      register: db_empty
+      
+    - debug: var=db_empty
+    
+    - name: "If empty, Restore Sample Data for Jira Server"
+      shell: pg_restore -h ServiceNode -U postgres -d jira "/home/ec2-user/master/assets/jira_{{ atl_product_type }}-8-13-1_sample.backup"
+      when: db_empty.stdout == ""
+
+    - name: "Waiting for instance to be reachable"
+      uri:
+        url: "http://Node1:8080/status"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 10
+
+    - name: "Waiting for startup to complete"
+      uri:
+        url: "http://Node1:8080/status"
+        method: GET
+        return_content: yes
+        headers:
+          Content-Type: "application/json"
+      ignore_errors: true
+      register: result
+      until: result.json.state == "RUNNING"
+      retries: 30
+      delay: 10
+
+    - name: "Reindexing Jira"
+      shell: curl -u admin:admin -X POST localhost:8080/rest/api/2/reindex

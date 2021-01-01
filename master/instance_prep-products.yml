@@ -7,3 +7,4 @@
   when: jira_datacenter | default(False) | bool
 - import_playbook: playbooks/jira-server.yml
   when: jira_server | default(False) | bool
+- include: playbooks/jira-restore-sample-data.yml
