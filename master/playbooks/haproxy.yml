@@ -75,8 +75,8 @@
           backend bk_web
               balance roundrobin
               cookie JSESSIONID prefix nocache
-              server node1 Node1:8080 check cookie node1
-              server node2 Node2:8080 check cookie node2
+              server node1 Node1:8080/jira check cookie node1
+              server node2 Node2:8080/jira check cookie node2
 
           listen stats
               bind *:9000
