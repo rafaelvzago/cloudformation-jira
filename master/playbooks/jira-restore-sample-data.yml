@@ -37,7 +37,7 @@
 
     - name: "Waiting for instance to be reachable"
       uri:
-        url: "http://Node1:8080/status"
+        url: "http://Node1:8080/jira/status"
         status_code: 200
       register: result
       until: result.status == 200
@@ -46,7 +46,7 @@
 
     - name: "Waiting for startup to complete"
       uri:
-        url: "http://Node1:8080/status"
+        url: "http://Node1:8080/jira/status"
         method: GET
         return_content: yes
         headers:
