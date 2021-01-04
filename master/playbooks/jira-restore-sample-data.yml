@@ -32,7 +32,7 @@
     - debug: var=db_empty
     
     - name: "If empty, Restore Sample Data for Jira Server"
-      shell: pg_restore -h ServiceNode -U postgres -d jira "/home/ec2-user/master/assets/jira_{{ atl_product_type }}-8-13-1_sample.backup"
+      shell: pg_restore -h ServiceNode -U postgres -d jira "{{ assets_dir }}/jira/jira_{{ atl_product_type }}-8-13-1_sample.backup"
       when: db_empty.stdout == ""
 
     - name: "Waiting for instance to be reachable"

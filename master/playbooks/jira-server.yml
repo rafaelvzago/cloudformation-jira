@@ -11,7 +11,7 @@
     - name: "Download Jira Software files"
       get_url:
         url: "{{ item }}"
-        dest: /home/ec2-user/downloads/
+        dest: '{{ downloads_path }}'
         mode: 0755
       loop:
         - https://www.atlassian.com/software/jira/downloads/binary/atlassian-jira-software-{{ jira_version }}-x64.bin
@@ -30,7 +30,7 @@
     - name: "Jira configure dbconfig.xml"
       copy:
         force: no
-        src: '{{ assets_dir }}/dbconfig.xml'
+        src: '{{ assets_dir }}/jira/dbconfig.xml'
         dest: '{{ atl_app_data_dir }}/jira/dbconfig.xml'
 
     - name: "Changing the address to the ServiceNode database"
@@ -47,7 +47,7 @@
     - name: "Configure server.xml"
       copy:
         force: yes
-        src: '{{ assets_dir }}/server.xml'
+        src: '{{ assets_dir }}/jira/server.xml'
         dest: '{{ atl_product_dir }}/jira/conf/server.xml'
 
     - name: "Wait until Postgresql is up and running"
