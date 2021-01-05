@@ -234,7 +234,6 @@ Resources:
             export JAVA_HOME="/etc/alternatives/jre"
             export ATL_PRODUCT=${AtlProduct}
             export ATL_PRODUCT_TYPE=${AtlProductType}
-            export TRAINING_MODULE=${TrainingModule}
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
@@ -304,7 +303,6 @@ Resources:
             export JAVA_HOME="/etc/alternatives/jre"
             export ATL_PRODUCT=${AtlProduct}
             export ATL_PRODUCT_TYPE=${AtlProductType}
-            export TRAINING_MODULE=${TrainingModule}
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
