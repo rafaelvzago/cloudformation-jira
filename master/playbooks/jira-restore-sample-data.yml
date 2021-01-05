@@ -32,12 +32,12 @@
     - debug: var=db_empty
     
     - name: "If empty, Restore Sample Data for Jira Server"
-      shell: pg_restore -h ServiceNode -U postgres -d jira "/home/ec2-user/master/assets/jira_{{ atl_product_type }}-8-13-1_sample.backup"
+      shell: pg_restore -h ServiceNode -U postgres -d jira "{{ assets_dir }}/jira/jira_{{ atl_product_type }}-8-13-1_sample.backup"
       when: db_empty.stdout == ""
 
     - name: "Waiting for instance to be reachable"
       uri:
-        url: "http://Node1:8080/status"
+        url: "http://Node1:8080/jira/status"
         status_code: 200
       register: result
       until: result.status == 200
@@ -46,7 +46,7 @@
 
     - name: "Waiting for startup to complete"
       uri:
-        url: "http://Node1:8080/status"
+        url: "http://Node1:8080/jira/status"
         method: GET
         return_content: yes
         headers:
