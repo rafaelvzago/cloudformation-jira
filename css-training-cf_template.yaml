@@ -16,7 +16,6 @@ Metadata:
         Parameters:
           - AtlProduct
           - AtlProductType
-          - TrainingModule
     ParameterLabels:
       userKeyName:
         default: userKeyName
@@ -32,8 +31,6 @@ Metadata:
         default: Atlassian Product
       AtlProductType:
         default: Product Installation Type
-      TrainingModule:
-        default: Training Module
 Parameters:
   userKeyName:
     Type: AWS::EC2::KeyPair::KeyName
@@ -95,23 +92,14 @@ Parameters:
     Description: "REQUIRED: Specify the Atlassian product to deploy"
     AllowedValues:
       - jira
-      - confluence
-      - bitbucket
+      - confluence (unavailable)
+      - bitbucket (unavailable)
   AtlProductType:
     Type: String
     Default: 'server'
     AllowedValues:
       - server
       - datacenter
-  TrainingModule:
-    Type: String
-    Description: Select the relevant training module or select '0' for a generic configuration.
-    Default: '0'
-    AllowedValues:
-      - '0'
-      - '1'
-      - '2'
-      - '3'
 
 Mappings:
   RegionMap:
@@ -177,7 +165,6 @@ Resources:
             export JAVA_HOME="/etc/alternatives/jre"
             export ATL_PRODUCT=${AtlProduct}
             export ATL_PRODUCT_TYPE=${AtlProductType}
-            export TRAINING_MODULE=${TrainingModule}
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
@@ -247,7 +234,6 @@ Resources:
             export JAVA_HOME="/etc/alternatives/jre"
             export ATL_PRODUCT=${AtlProduct}
             export ATL_PRODUCT_TYPE=${AtlProductType}
-            export TRAINING_MODULE=${TrainingModule}
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
@@ -317,7 +303,6 @@ Resources:
             export JAVA_HOME="/etc/alternatives/jre"
             export ATL_PRODUCT=${AtlProduct}
             export ATL_PRODUCT_TYPE=${AtlProductType}
-            export TRAINING_MODULE=${TrainingModule}
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
