@@ -9,7 +9,7 @@ On this page:
 
 * Ensure you are familiar with the [CSS AWS Bootstrapper and Guide](https://hello.atlassian.net/wiki/spaces/C4L/pages/248795907/CSS+AWS+Bootstrapper+and+Guide)
 * Ensure you can [access AWS and have an existing keypair](https://hello.atlassian.net/wiki/spaces/C4L/pages/248816898/Accessing+the+AWS+Dashboard)
-* Create a [PSI ticket](https://hello.atlassian.net/servicedesk/customer/portal/85/group/405/create/3405), which will be used to monitor and track the instance
+* Create a [PSI ticket](https://hello.atlassian.net/servicedesk/customer/portal/85/group/405/create/3872), which will be used to monitor and track the instance
 
 ### How do I get set up? ###
 If not already done so, please first create a [PSI ticket](https://hello.atlassian.net/servicedesk/customer/portal/85/group/405/create/3405)
