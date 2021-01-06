@@ -25,7 +25,7 @@ Complete the multiple fields that are required for deployment. Click **Next**, t
 You'll be presented with an **Events** screen where you click **Refresh** and monitor the creation progress.
 * The instances will be deployed fairly quickly, but setup will take up to 15 minutes.
 
-Three instances would have been deployed:
+#### Three instances would have been deployed: ####
 
 * ServiceNode - this will contain all the services used by the products, including the NFS mount, HAProxy, and the PostgreSQL database.
 * Node1 - this is a product node that will install and start your selected product
@@ -41,6 +41,6 @@ You'll see the deployed instances. To connect to each one:
 * You'll be presented with the instances IP address and an example of how to connect via *ssh*.
 
 
-### Who do I talk to? ###
+#### Who do I talk to? ####
 * David Chan, Rafael Zago, Jeff Curry
 * Slack: #css-training-ansible #css-awshelp
