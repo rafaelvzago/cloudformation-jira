@@ -15,10 +15,8 @@ On this page:
 If not already done so, please first create a [PSI ticket](https://hello.atlassian.net/servicedesk/customer/portal/85/group/405/create/3405)
 * This will be used for the *Ticket* field during deployment
 
-Deployment is done via CloudFormation templates. This can be done by one of 2 methods:
-
-* Uploading the *css-training-cf_template.yaml* template
-* Or use the S3 URL to build the stack. Using the S3 URL will also ensure you are always on the latest version of the template as the URL doesn't change when the version increments.
+Deployment is done via CloudFormation templates. Use the S3 URL to build the stack. This will ensure you are always on the latest version of the template as the URL doesn't change when the version increments.
+`https://css-training-scripts.s3.amazonaws.com/css-training-cf_template.yaml`
 
 Complete the multiple fields that are required for deployment. Click **Next**, the following screens can be skipped. Click through until you can **Create Stack**.
 
