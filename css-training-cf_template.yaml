@@ -171,8 +171,8 @@ Resources:
             cat <<EOT >> /home/ec2-user/.bashrc
             export JRE_HOME="/etc/alternatives/jre"
             export JAVA_HOME="/etc/alternatives/jre"
-            export ATL_PRODUCT=${AtlProduct}
-            export ATL_PRODUCT_TYPE=${AtlProductType}
+            export ATL_PRODUCT="${AtlProduct}"
+            export ATL_PRODUCT_TYPE="${AtlProductType}"
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
@@ -240,8 +240,8 @@ Resources:
             cat <<EOT >> /home/ec2-user/.bashrc
             export JRE_HOME="/etc/alternatives/jre"
             export JAVA_HOME="/etc/alternatives/jre"
-            export ATL_PRODUCT=${AtlProduct}
-            export ATL_PRODUCT_TYPE=${AtlProductType}
+            export ATL_PRODUCT="${AtlProduct}"
+            export ATL_PRODUCT_TYPE="${AtlProductType}"
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
@@ -309,8 +309,8 @@ Resources:
             cat <<EOT >> /home/ec2-user/.bashrc
             export JRE_HOME="/etc/alternatives/jre"
             export JAVA_HOME="/etc/alternatives/jre"
-            export ATL_PRODUCT=${AtlProduct}
-            export ATL_PRODUCT_TYPE=${AtlProductType}
+            export ATL_PRODUCT="${AtlProduct}"
+            export ATL_PRODUCT_TYPE="${AtlProductType}"
             EOT
             source /home/ec2-user/.bashrc
             # yum update and install ansible
