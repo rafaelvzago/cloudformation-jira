@@ -6,12 +6,12 @@
 
 - import_playbook: playbooks/jira-install.yml
   when: jira_server | default(False) | bool or jira_datacenter | default(False) | bool
+#- import_playbook: playbooks/jira-restore-sample-data.yml
+#  when: jira_server | default(False) | bool or jira_datacenter | default(False) | bool
 #- import_playbook: playbooks/jira-server-configure.yml
 #  when: jira_server | default(False) | bool
 - import_playbook: playbooks/jira-datacenter-configure.yml
   when: jira_datacenter | default(False) | bool
-#- import_playbook: playbooks/jira-restore-sample-data.yml
-#  when: jira_server | default(False) | bool or jira_datacenter | default(False) | bool
 
 - import_playbook: playbooks/confluence-install.yml
   when: confluence_server | default(False) | bool or confluence_datacenter | default(False) | bool

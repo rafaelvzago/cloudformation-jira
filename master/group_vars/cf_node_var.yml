@@ -19,6 +19,7 @@ assets_dir: "/home/ec2-user/master/assets"
 
 
 # Pulled from env
+node_id: "{{ lookup('env', 'NODE_ID') }}"
 atl_product: "{{ lookup('env', 'ATL_PRODUCT') or 'jira' }}"
 atl_product_type: "{{ lookup('env', 'ATL_PRODUCT_TYPE') or 'server' }}"
 training_module: "{{ lookup('env', 'TRAINING_MODULE') or '0' }}"
