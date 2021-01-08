@@ -31,6 +31,12 @@
         src: '{{ assets_dir }}/jira/server.xml'
         dest: '{{ atl_product_dir }}/jira/conf/server.xml'
     
+    - name: "Configure setenv.sh"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/jira/setenv.sh'
+        dest: '{{ atl_product_dir }}/jira/bin/setenv.sh'
+    
     - name: "Wait until Postgresql is up and running"
       wait_for:
         host: "ServiceNode"
