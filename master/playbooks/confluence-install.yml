@@ -15,4 +15,3 @@
         mode: 0755
       loop:
         - https://www.atlassian.com/software/confluence/downloads/binary/atlassian-confluence-{{ confluence_version }}-x64.bin
-      when: atl_product == "confluence"

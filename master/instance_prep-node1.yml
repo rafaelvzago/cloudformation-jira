@@ -3,6 +3,7 @@
 - include: playbooks/osquery.yml
 - include: playbooks/postgresql_client.yml
 - include: playbooks/mount-shared.yml
+
 - import_playbook: playbooks/jira-install.yml
   when: jira_server | default(False) | bool or jira_datacenter | default(False) | bool
 - import_playbook: playbooks/jira-server-configure.yml
@@ -11,3 +12,9 @@
   when: jira_datacenter | default(False) | bool
 - import_playbook: playbooks/jira-restore-sample-data.yml
   when: jira_server | default(False) | bool or jira_datacenter | default(False) | bool
+
+- import_playbook: playbooks/confluence-install.yml
+  when: confluence_server | default(False) | bool or confluence_datacenter | default(False) | bool
+
+- import_playbook: playbooks/bitbucket-install.yml
+  when: bitbucket_server | default(False) | bool or bitbucket_datacenter | default(False) | bool

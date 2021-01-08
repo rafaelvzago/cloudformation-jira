@@ -12,7 +12,7 @@ Metadata:
           - BusinessUnit
           - PowerNap
       - Label:
-          default: Training Module Information
+          default: Product Information
         Parameters:
           - AtlProduct
           - AtlProductType
@@ -41,17 +41,17 @@ Parameters:
     ConstraintDescription: You must select an existing keypair.
   BusinessUnit:
     Type: String
+    Description: 'REQUIRED: Select your department and region
     AllowedValues:
       - Premier Support-Americas
       - Premier Support-APAC
-      - Premier Support-Americas
       - Premier Support-EMEA
-      - Support Cloud-APAC
       - Support Cloud-Americas
+      - Support Cloud-APAC
+      - Support Cloud-EMEA
+      - Support Server-Americas
       - Support Server-APAC
-      - Support Server-Americas
       - Support Server-EMEA
-      - Support Server-Americas
       - Account Management
   ResourceOwner:
     Type: String
@@ -89,11 +89,11 @@ Parameters:
       - '5760'
   AtlProduct:
     Type: String
-    Description: "REQUIRED: Specify the Atlassian product to deploy"
+    Description: "REQUIRED: Specify the Atlassian product to deploy. Confluence and Bitbucket are currently unavailable. Selecting these will download the installer, but not complete the setup"
     AllowedValues:
       - jira
-      - confluence (unavailable)
-      - bitbucket (unavailable)
+      - confluence
+      - bitbucket
   AtlProductType:
     Type: String
     Default: 'server'
@@ -184,7 +184,7 @@ Resources:
             aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
             sudo chown -R ec2-user.ec2-user /home/ec2-user
             tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            ansible-playbook -e '${AtlProduct}_${AtlProductType}=True' /home/ec2-user/master/instance_prep-products.yml
+            ansible-playbook -e '${AtlProduct}_${AtlProductType}=True' /home/ec2-user/master/instance_prep-node1.yml
 
   Node2:
     Type: AWS::EC2::Instance
@@ -253,7 +253,7 @@ Resources:
             aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
             sudo chown -R ec2-user.ec2-user /home/ec2-user
             tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            # ansible-playbook /home/ec2-user/master/instance_prep-products.yml
+            ansible-playbook -e '${AtlProduct}_${AtlProductType}=True' /home/ec2-user/master/instance_prep-node2.yml
 
   ServiceNode:
     Type: AWS::EC2::Instance
