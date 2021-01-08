@@ -1,0 +1,25 @@
+---
+- name: "Playbook to install Nginx"
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
+
+  tasks:
+
+    - name: "Install Nginx"
+      yum:
+        name: "nginx"
+        state: present
+
+    - name: "Change Nginx Port to 81"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/common/nginx.conf'
+        dest: '/etc/nginx/nginx.conf' 
+
+    - name: "Start service Nginx, if not started"
+      service:
+        name: nginx
+        state: restarted
