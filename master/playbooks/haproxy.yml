@@ -3,6 +3,8 @@
   hosts: localhost
   become: yes
   gather_facts: yes
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
 
   tasks:
 
