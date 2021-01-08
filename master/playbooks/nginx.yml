@@ -22,6 +22,12 @@
         name: nginx
         state: restarted
 
+    - name: "Create and configure 'index.html'"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/common/index.html'
+        dest: '/usr/share/nginx/html/index.html'
+
     - name: "Collecting Node1 ip"
       shell: "cat /etc/hosts | grep Node1 | cut -d'\t' -f1"
       register: grep_output
