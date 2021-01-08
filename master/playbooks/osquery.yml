@@ -22,13 +22,15 @@
       yum:
         name: jq
         state: present
+
+    - ec2_metadata_facts:
     
     - name: "Copy osquery.conf"
       copy:
         force: no
         src: /usr/share/osquery/osquery.example.conf
         dest: /etc/osquery/osquery.conf
-    
+        
     - name: "Create osquery.flags"
       copy:
         force: no
@@ -49,9 +51,9 @@
           --disable_events=false
           --disable_audit=false
           --allow_audit_config=true
-          --aws_region=us-east-1
-          --aws_sts_region=us-east-1
           --aws_sts_session_name=osquery
+          --aws_region='{{ ansible_ec2_placement_region }}'
+          --aws_sts_region='{{ ansible_ec2_placement_region }}'
 
     - name: "Create osqueryd"
       copy:
@@ -66,15 +68,10 @@
           # Custom env vars decorators
           OSQUERY_SERVICE=css_support
           OSQUERY_ENV=osquery_css
-          OSQUERY_DEPLOYMENT_ID=10.125.91.122
+          OSQUERY_DEPLOYMENT_ID={{ ansible_default_ipv4.address }}
     
     - name: "Enable and start OSqueryd"
       systemd:
         name: osqueryd
         enabled: yes
         state: started
-    
-    - name: "Run osquery.sh"
-      shell: /home/ec2-user/master/osquery.sh
-      args:
-          executable: /bin/bash
