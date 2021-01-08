@@ -31,7 +31,7 @@
       
     - debug: var=db_empty
     
-    - name: "If empty, Restore Sample Data for Jira Server"
+    - name: "If empty, Restore Sample Data for Jira"
       shell: pg_restore -h ServiceNode -U postgres -d jira "{{ assets_dir }}/jira/jira_{{ atl_product_type }}-8-13-1_sample.backup"
       when: db_empty.stdout == ""
 

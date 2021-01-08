@@ -6,7 +6,7 @@
   <database-type>postgres72</database-type>
   <schema-name>public</schema-name>
   <jdbc-datasource>
-    <url>jdbc:postgresql://localhost:5432/jira</url>
+    <url>jdbc:postgresql://ServiceNode:5432/jira</url>
     <driver-class>org.postgresql.Driver</driver-class>
     <username>atlassian</username>
     <password>atlassian</password>
