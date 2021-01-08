@@ -52,6 +52,10 @@
       yum:
         name: "@Development tools"
         state: present
+      register: result
+      retries: 5
+      delay: 10
+      until: result is success
 
 # Install Java, to swtich use:  sudo alternatives --config java
     - name: Install Java OpenJDK 11
@@ -63,12 +67,10 @@
       yum:
         name: "java-1.8.0-openjdk"
         state: present
-
-# Needed to make use of ansible "expect" module    
-    - name: "Install pexpect"
-      pip:
-        name: pexpect
-        state: present
+      register: result
+      retries: 5
+      delay: 10
+      until: result is success
 
 # Configuring system to use AWS CLI
     - name: "Install boto for AWS CLI"
