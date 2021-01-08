@@ -41,7 +41,7 @@ Parameters:
     ConstraintDescription: You must select an existing keypair.
   BusinessUnit:
     Type: String
-    Description: 'REQUIRED: Select your department and region
+    Description: 'REQUIRED: Select your department and region'
     AllowedValues:
       - Premier Support-Americas
       - Premier Support-APAC
