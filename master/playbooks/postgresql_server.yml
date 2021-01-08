@@ -16,6 +16,10 @@
           - postgresql-server
           - postgresql-devel
         state: present
+      register: result
+      retries: 5
+      delay: 5
+      until: result is success
     
     - name: "Initial PostgreSQL setup"
       shell: |
@@ -65,7 +69,3 @@
         name: postgresql
         state: restarted
         daemon_reload: yes
-
-# We'll want to move this to the product node once we have PostgreSQL accepting connections.
-#    - name: "Restoring Sample Data for Jira Server"
-#      command: pg_restore -h localhost -p 5432 -U postgres -d jira -v "/home/ec2-user/scripts/assets/jira_server-8-13-1_sample.backup"
