@@ -1,0 +1,29 @@
+---
+- name: "Playbook for configuring and starting Jira"
+  hosts: localhost
+  become: yes
+  become_user: ec2-user
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
+  
+  tasks:
+
+    - name: "Jira configure dbconfig.xml"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/jira/dbconfig.xml'
+        dest: '{{ atl_app_data_dir }}/jira/dbconfig.xml'
+
+    - name: "Configure server.xml"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/jira/server.xml'
+        dest: '{{ atl_product_dir }}/jira/conf/server.xml'
+
+    - name: "Wait until Postgresql is up and running"
+      wait_for:
+        host: "ServiceNode"
+        port: 5432
+
+    - name:  "Start Jira"
+      command: '{{ atl_product_dir }}/jira/bin/start-jira.sh'
