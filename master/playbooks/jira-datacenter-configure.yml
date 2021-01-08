@@ -36,5 +36,55 @@
         host: "ServiceNode"
         port: 5432
 
+    - name: "Waiting for Node1 to be reachable"
+      uri:
+        url: "http://Node1:8080/jira/status"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 10
+      when: node_id != "node1"
+    
+    - name: "Wait until Node1 is up and running"
+      uri:
+        url: "http://Node1:8080/jira/status"
+        method: GET
+        return_content: yes
+        headers:
+          Content-Type: "application/json"
+      ignore_errors: true
+      register: result
+      until: result.json.state == "RUNNING"
+      retries: 30
+      delay: 10
+      when: node_id != "node1"
+
     - name:  "Start Jira"
       command: '{{ atl_product_dir }}/jira/bin/start-jira.sh'
+
+    - name: "Waiting for instance to be reachable"
+      uri:
+        url: "http://localhost:8080/jira/status"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 10
+      
+    - name: "Waiting for startup to complete"
+      uri:
+        url: "http://localhost:8080/jira/status"
+        method: GET
+        return_content: yes
+        headers:
+          Content-Type: "application/json"
+      ignore_errors: true
+      register: result
+      until: result.json.state == "RUNNING"
+      retries: 30
+      delay: 10
+
+    - name: "Reindexing Jira"
+      shell: curl -u admin:Charlie! -X POST localhost:8080/jira/rest/api/2/reindex
+      when: node_id == "node1"
