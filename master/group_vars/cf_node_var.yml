@@ -5,7 +5,9 @@
 #    - /home/ec2-user/master/group_vars/cf_node_var.yml
 
 # Product Versions
-jira_version: "8.13.1"
+jira_version: "8.13.2"
+confluence_version: "7.4.6"
+bitbucket_version: "7.9.0"
 
 # Default Paths
 downloads_path: "/home/ec2-user/downloads"
