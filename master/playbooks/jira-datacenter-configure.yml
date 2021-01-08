@@ -19,11 +19,11 @@
         src: '{{ assets_dir }}/jira/cluster.properties'
         dest: '{{ atl_app_data_dir }}/jira/cluster.properties'
 
-    - name: "Changing node ID {{ ansible_hostname }}"
+    - name: "Changing node ID {{ node_id }}"
       replace:
         path: '{{ atl_app_data_dir }}/jira/cluster.properties'
         regexp: "CLUSTERID"
-        replace: "{{ ansible_hostname }}"
+        replace: "{{ node_id }}"
     
     - name: "Configure server.xml"
       copy:
