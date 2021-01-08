@@ -3,8 +3,8 @@
   hosts: localhost
   become: yes
   gather_facts: yes
-  vars:
-    installation_type: "{{ installattion_type }}"
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
 
   tasks:
 
@@ -13,76 +13,11 @@
         name: "haproxy"
         state: present
 
-    - name: "Create and configure 'haproxy.cfg' for a server installation"
-      when: installation_type == "server"
+    - name: "Create and configure 'haproxy.cfg'"
       copy:
         force: yes
-        dest: /etc/haproxy/haproxy.cfg
-        content: |
-          global
-              user    haproxy
-              group   haproxy
-              nbproc  1
-              maxconn 50000
-
-          defaults
-              mode http
-              timeout connect 5000ms
-              timeout client 50000ms
-              timeout server 50000ms
-              log global
-              option httplog
-
-          frontend ft_web
-              bind 0.0.0.0:80
-              default_backend bk_web
-
-          backend bk_web
-              balance roundrobin
-              cookie JSESSIONID prefix nocache
-              server node1 Node1:8080 check cookie node1
-
-          listen stats
-              bind *:9000
-              stats enable
-              stats uri /
-              stats refresh 5s
-
-    - name: "Create and configure 'haproxy.cfg' for a datacenter installation"
-      when: installation_type == "datacenter"
-      copy:
-        force: yes
-        dest: /etc/haproxy/haproxy.cfg
-        content: |
-          global
-              user    haproxy
-              group   haproxy
-              nbproc  1
-              maxconn 50000
-
-          defaults
-              mode http
-              timeout connect 5000ms
-              timeout client 50000ms
-              timeout server 50000ms
-              log global
-              option httplog
-
-          frontend ft_web
-              bind 0.0.0.0:80
-              default_backend bk_web
-
-          backend bk_web
-              balance roundrobin
-              cookie JSESSIONID prefix nocache
-              server node1 Node1:8080/jira check cookie node1
-              server node2 Node2:8080/jira check cookie node2
-
-          listen stats
-              bind *:9000
-              stats enable
-              stats uri /
-              stats refresh 5s
+        src: '{{ assets_dir }}/common/haproxy.cfg'
+        dest: '/etc/haproxy/haproxy.cfg'
 
     - name: "Start service haproxy, if not started"
       service:
