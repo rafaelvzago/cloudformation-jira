@@ -36,6 +36,11 @@
         state: directory
         mode: 0755
 
+# Set hostname
+    - name: "Set hostname"
+      hostname:
+        name: '{{ node_id }}'
+
 # yum update
     - name: Upgrade all packages, excluding kernel related packages
       yum:
