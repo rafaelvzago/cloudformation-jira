@@ -1,6 +1,7 @@
 ---
 - include: playbooks/general.yml
 - include: playbooks/osquery.yml
+- include: playbooks/nginx.yml 
+- include: playbooks/haproxy.yml 
 - include: playbooks/nfs-server.yml
 - include: playbooks/postgresql_server.yml
-- include: playbooks/haproxy.yml 

@@ -681,3 +681,18 @@ Resources:
           FromPort: 20000
           ToPort: 20000
           CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 81
+          ToPort: 81
+          CidrIp: 10.0.0.0/8
+        - IpProtocol: tcp
+          FromPort: 81
+          ToPort: 81
+          CidrIp: 172.16.0.0/12
+        - IpProtocol: tcp
+          FromPort: 81
+          ToPort: 81
+          CidrIp: 192.168.0.0/16
+        - IpProtocol: tcp
+          FromPort: 81
+          ToPort: 81

@@ -1,0 +1,62 @@
+---
+- name: "Playbook to install Nginx"
+  hosts: localhost
+  become: yes
+  gather_facts: yes
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
+
+  tasks:
+
+    - name: "Install Nginx"
+      shell: "sudo amazon-linux-extras install nginx1"
+
+    - name: "Change Nginx Port to 81"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/common/nginx.conf'
+        dest: '/etc/nginx/nginx.conf'
+
+    - name: "Start service Nginx, if not started"
+      service:
+        name: nginx
+        state: restarted
+
+    - name: "Create and configure 'index.html'"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/common/index.html'
+        dest: '/usr/share/nginx/html/index.html'
+
+    - name: "Collecting Node1 ip"
+      shell: "cat /etc/hosts | grep Node1 | cut -d'\t' -f1"
+      register: grep_output
+
+    - name: "Relpacing the Node1 ip on Nginx"
+      become: yes
+      replace:
+        path: '/usr/share/nginx/html/index.html'
+        regexp: "#IP1#"
+        replace: "{{ grep_output.stdout }}"
+
+    - name: "Collecting Node2 ip"
+      shell: "cat /etc/hosts | grep Node2 | cut -d'\t' -f1"
+      register: grep_output
+
+    - name: "Relpacing the Node2 ip on Nginx"
+      become: yes
+      replace:
+        path: '/usr/share/nginx/html/index.html'
+        regexp: "#IP2#"
+        replace: "{{ grep_output.stdout }}"
+
+    - name: "Collecting ServiceNode ip"
+      shell: "cat /etc/hosts | grep ServiceNode | cut -d'\t' -f1"
+      register: grep_output
+
+    - name: "Relpacing the ServiceNode ip on Nginx"
+      become: yes
+      replace:
+        path: '/usr/share/nginx/html/index.html'
+        regexp: "#IP#"
+        replace: "{{ grep_output.stdout }}"
