@@ -33,6 +33,10 @@
 
     - name:  "Start Jira"
       command: '{{ atl_product_dir }}/jira/bin/start-jira.sh'
+    
+    - name: Sleep for 30 seconds. Workaround for Jira Server status check, see issue 28
+      wait_for:
+        timeout: 30
 
     - name: "Waiting for instance to be reachable"
       uri:
