@@ -117,75 +117,6 @@ Mappings:
       VPC: vpc-3c07de58
 
 Resources:
-  ServiceNode:
-    Type: AWS::EC2::Instance
-    Properties:
-      SubnetId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - SUBNET
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
-      DisableApiTermination: 'false'
-      InstanceType: m5.xlarge
-      KeyName: !Ref 'userKeyName'
-      BlockDeviceMappings:
-        - DeviceName: /dev/sda1
-          Ebs:
-            VolumeType: gp2
-            VolumeSize: 30
-      IamInstanceProfile: security-osquery
-      SecurityGroupIds:
-        - !Ref 'SecurityGroupServiceNode'
-      Tags:
-        - Key: Name
-          Value: !Join
-            - '-'
-            - - !Ref 'userKeyName'
-              - !Ref 'Ticket'
-              - service-node
-        - Key: resource_owner
-          Value: !Ref 'ResourceOwner'
-        - Key: business_unit
-          Value: !Ref 'BusinessUnit'
-        - Key: cost_allocation
-          Value: !Ref 'BusinessUnit'
-        - Key: power_nap
-          Value: !Ref 'PowerNap'
-        - Key: service_name
-          Value: !Ref 'Ticket'
-        - Key: stackId
-          Value: !Ref 'AWS::StackId'
-        - Key: tgw_environment
-          Value: 'dev'
-      UserData:
-        Fn::Base64:
-          !Sub |
-            #!/bin/bash -xe 
-            # Implement logging for userdata
-            exec > >(tee /var/log/userdata.log|logger -t user-data -s
-            2>/dev/console) 2>&1
-            # Set env variables
-            cat <<EOT >> /home/ec2-user/.bashrc
-            export NODE_ID="servicenode"
-            export JRE_HOME="/etc/alternatives/jre"
-            export JAVA_HOME="/etc/alternatives/jre"
-            export ATL_PRODUCT="${AtlProduct}"
-            export ATL_PRODUCT_TYPE="${AtlProductType}"
-            EOT
-            source /home/ec2-user/.bashrc
-            # yum update and install ansible
-            sudo yum update -y
-            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            sudo python get-pip.py
-            sudo python -m pip install ansible
-            # download and run ansible playbooks
-            aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
-            sudo chown -R ec2-user.ec2-user /home/ec2-user
-            tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
-            ansible-playbook /home/ec2-user/master/instance_prep-services.yml
   Node1:
     Type: AWS::EC2::Instance
     Properties:
@@ -326,6 +257,75 @@ Resources:
             tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
             ansible-playbook -e '${AtlProduct}_${AtlProductType}=True' /home/ec2-user/master/instance_prep-node2.yml
 
+  ServiceNode:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - SUBNET
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      DisableApiTermination: 'false'
+      InstanceType: m5.xlarge
+      KeyName: !Ref 'userKeyName'
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp2
+            VolumeSize: 30
+      IamInstanceProfile: security-osquery
+      SecurityGroupIds:
+        - !Ref 'SecurityGroupServiceNode'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref 'userKeyName'
+              - !Ref 'Ticket'
+              - service-node
+        - Key: resource_owner
+          Value: !Ref 'ResourceOwner'
+        - Key: business_unit
+          Value: !Ref 'BusinessUnit'
+        - Key: cost_allocation
+          Value: !Ref 'BusinessUnit'
+        - Key: power_nap
+          Value: !Ref 'PowerNap'
+        - Key: service_name
+          Value: !Ref 'Ticket'
+        - Key: stackId
+          Value: !Ref 'AWS::StackId'
+        - Key: tgw_environment
+          Value: 'dev'
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe 
+            # Implement logging for userdata
+            exec > >(tee /var/log/userdata.log|logger -t user-data -s
+            2>/dev/console) 2>&1
+            # Set env variables
+            cat <<EOT >> /home/ec2-user/.bashrc
+            export NODE_ID="servicenode"
+            export JRE_HOME="/etc/alternatives/jre"
+            export JAVA_HOME="/etc/alternatives/jre"
+            export ATL_PRODUCT="${AtlProduct}"
+            export ATL_PRODUCT_TYPE="${AtlProductType}"
+            EOT
+            source /home/ec2-user/.bashrc
+            # yum update and install ansible
+            sudo yum update -y
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            sudo python get-pip.py
+            sudo python -m pip install ansible
+            # download and run ansible playbooks
+            aws s3 cp s3://css-training-scripts/ansible-instance_prep.tar.gz /home/ec2-user/ansible-instance_prep.tar.gz
+            sudo chown -R ec2-user.ec2-user /home/ec2-user
+            tar -zxvf /home/ec2-user/ansible-instance_prep.tar.gz -C /home/ec2-user/
+            ansible-playbook /home/ec2-user/master/instance_prep-services.yml
 
   SecurityGroupNode:
     Type: AWS::EC2::SecurityGroup
@@ -696,3 +696,4 @@ Resources:
         - IpProtocol: tcp
           FromPort: 81
           ToPort: 81
+
