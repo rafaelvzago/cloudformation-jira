@@ -26,10 +26,8 @@
         src: '{{ assets_dir }}/jira/setenv.sh'
         dest: '{{ atl_product_dir }}/jira/bin/setenv.sh'
 
-    - cron:
-        name: "Adding the installation to the crontab"
-        special_time: reboot
-        job: "{{ atl_product_dir }}/jira/bin/start-jira.sh"
+    - name: "Adding the installation to the crontab"
+      command: 'echo "@reboot {{ atl_product_dir }}/jira/bin/start-jira.sh" > /tmp/crontab; crontab /tmp/contrab'
 
     - name: "Wait until Postgresql is up and running"
       wait_for:
