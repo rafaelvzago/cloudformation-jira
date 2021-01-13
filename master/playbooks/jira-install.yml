@@ -35,3 +35,33 @@
       command: '{{ downloads_path }}/atlassian-jira-software-{{ jira_version }}-x64.bin -q -varfile {{ assets_dir }}/jira/jira_response.varfile'
       args:
         creates: '{{ atl_product_dir }}/jira/bin/start-jira.sh'
+
+# Setup Jira as a Service    
+    - name: "Create jira.service"
+      become: yes
+      become_user: root
+      copy:
+        dest: /lib/systemd/system/jira.service
+        force: no
+        content: |
+          [Unit] 
+          Description=Atlassian Jira
+          After=network.target
+
+          [Service] 
+          Type=forking
+          User=ec2-user
+          PIDFile={{ atl_product_dir }}/jira/work/catalina.pid
+          ExecStart={{ atl_product_dir }}/jira/bin/start-jira.sh
+          ExecStop={{ atl_product_dir }}/jira/bin/stop-jira.sh
+
+          [Install] 
+          WantedBy=multi-user.target
+
+    - name: "Enable the jira service"
+      become: yes
+      become_user: root
+      systemd:
+        name: jira
+        daemon_reload: yes
+        enabled: yes
