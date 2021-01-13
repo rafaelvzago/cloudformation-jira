@@ -31,8 +31,12 @@
         host: "ServiceNode"
         port: 5432
 
-    - name:  "Start Jira"
-      command: '{{ atl_product_dir }}/jira/bin/start-jira.sh'
+    - name: "Start the jira service"
+      become: yes
+      become_user: root
+      systemd:
+        name: jira
+        state: started
     
     - name: Sleep for 30 seconds. Workaround for Jira Server status check, see issue 28
       wait_for:

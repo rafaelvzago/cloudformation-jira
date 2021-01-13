@@ -66,8 +66,12 @@
       delay: 10
       when: node_id != "node1"
 
-    - name:  "Start Jira"
-      command: '{{ atl_product_dir }}/jira/bin/start-jira.sh'
+    - name: "Start the jira service"
+      become: yes
+      become_user: root
+      systemd:
+        name: jira
+        state: started
 
     - name: "Waiting for instance to be reachable"
       uri:
