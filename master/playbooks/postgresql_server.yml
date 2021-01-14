@@ -40,7 +40,9 @@
       shell: |
         psql -c "create role atlassian password 'atlassian' createdb inherit login"
         psql -c "create database jira with owner atlassian encoding 'UTF8'"
+        psql -c "create database confluence with owner atlassian encoding 'UTF8'"
         psql -c "grant all privileges on database jira to atlassian"
+        psql -c "grant all privileges on database confluence to atlassian"
     
     - name: "Configure 'postgresql.conf' to allow listening on localhost, DC requires '*' instead"
       become: yes

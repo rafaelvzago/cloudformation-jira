@@ -1,0 +1,36 @@
+---
+- name: "Playbook for Restoring sample database for Confluence"
+  hosts: localhost
+  become: yes
+  become_user: ec2-user
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
+    
+  tasks:
+    
+    - name: "Wait until Postgresql is up and running"
+      wait_for:
+        host: "ServiceNode"
+        port: 5432
+    
+    - name: "Check if the confluence database already exists"
+      shell: psql -h Servicenode -U postgres -l | grep confluence
+      ignore_errors: true
+      register: db_exists
+    
+    - debug: var=db_exists
+    
+    - name: "Check if confluence database exists"
+      command: createdb -h ServiceNode -U postgres confluence
+      when: db_exists.failed
+    
+    - name: "Check if confluence database is empty"
+      shell: psql -h ServiceNode -U postgres -qAt confluence -c "select 1 from information_schema.tables where table_schema = 'public' and table_name = 'content';"
+      ignore_errors: true
+      register: db_empty
+      
+    - debug: var=db_empty
+    
+    - name: "If empty, Restore Sample Data for Confluence"
+      shell: pg_restore -h ServiceNode -U postgres -d confluence "{{ assets_dir }}/confluence/confluence_{{ atl_product_type }}-{{ confluence_version }}_sample.backup"
+      when: db_empty.stdout == ""

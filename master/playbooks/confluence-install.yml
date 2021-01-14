@@ -5,13 +5,65 @@
   become_user: ec2-user
   vars_files:
     - /home/ec2-user/master/group_vars/cf_node_var.yml
-
+  
   tasks:
 
-    - name: "Download Confluence files"
+    - name: "Download Confluence Software files"
       get_url:
         url: "{{ item }}"
         dest: '{{ downloads_path }}'
         mode: 0755
+      register: result
+      retries: 5
+      delay: 10
+      until: result is success
       loop:
-        - https://www.atlassian.com/software/confluence/downloads/binary/atlassian-confluence-{{ confluence_version }}-x64.bin
+        - https://www.atlassian.com/software/confluence/downloads/binary/atlassian-confluence-{{ confluence_version }}.tar.gz
+
+    - name: "Install fontconfig"
+      become: yes
+      yum:
+        name: fontconfig
+        state: present
+
+    - name: "Creating Confluence application-data directory"
+      file:
+        path: '{{ atl_app_data_dir }}/confluence'
+        state: directory
+
+    - name: "Creating Confluence installation directory"
+      file:
+        path: '{{ atl_product_dir }}/confluence'
+        state: directory
+
+    - name: "Extracting Confluence files"
+      ansible.builtin.unarchive:
+        src: '{{ downloads_path }}/atlassian-confluence-{{ confluence_version }}.tar.gz'
+        dest: '{{ atl_product_dir }}/confluence'
+        extra_opts: [--strip-components=1]
+
+    - name: "Installing confluence as a service"
+      become: yes
+      become_user: root
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/confluence/confluence.service'
+        dest: '/lib/systemd/system/confluence.service'
+        mode: '0644'
+        owner: ec2-user
+        group: ec2-user
+
+    - name: "Replacing confluence path to the service file"
+      become: yes
+      become_user: root
+      replace:
+        path: '/lib/systemd/system/confluence.service'
+        regexp: "#APP_DATA"
+        replace: "{{ atl_product_dir }}/confluence/"
+
+    - name: "Just force systemd to reread configs (2.4 and above)"
+      become: yes
+      become_user: root
+      ansible.builtin.systemd:
+        daemon_reload: yes
+

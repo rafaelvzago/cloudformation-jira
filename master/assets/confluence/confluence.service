@@ -1,0 +1,16 @@
+[Unit]
+Description=Confluence
+After=network.target
+
+[Service]
+Type=forking
+User=ec2-user
+PIDFile=#APP_DATA/work/catalina.pid
+ExecStart=#APP_DATA/bin/start-confluence.sh
+ExecStop=#APP_DATA/bin/stop-confluence.sh
+TimeoutSec=200
+LimitNOFILE=4096
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

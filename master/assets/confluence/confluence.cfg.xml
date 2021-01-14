@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<confluence-configuration>
+  <setupStep>complete</setupStep>
+  <setupType>custom</setupType>
+  <buildNumber>8402</buildNumber>
+  <properties>
+    <property name="admin.ui.allow.daily.backup.custom.location">false</property>
+    <property name="admin.ui.allow.manual.backup.download">false</property>
+    <property name="admin.ui.allow.site.support.email">false</property>
+    <property name="atlassian.license.message">AAABsw0ODAoPeNpdUV2Pk0AUfZ9fcRPfmgwF2rXahEQXRrObFRoKGld9mMKFjsIMmRmq9dc7S9uklmReODkf95xXX7CGRy4hWECwXC9X67sllEUMoR8GJB37HeqsKQ1qEwW++0ispOWVTXmPUc4bjh0881aRSsnGc4A4YGT1iGQz6mrPDSbcYvQiR/2ABgvyJCqUBovjgJNIwj6zp2zD8gvC/gxCHyfaKDvRC4v1xZZ94qKL9F/n+I7bjhsjuPQq1ZMt6gPqhyS6ZytGl8lzSF9njyv6cfH2zSnclfGV6QRdDo270VjUqarRRD6ZzWZpVtAPWU43eZaUcfGQpbTcMgdEsUYXsYbdEewe4awOTFaOrWHQ6idWFr7trR2+r+fzVnn/JZ53JwbFE+OHB4kCqSzUwlgtdqNFpywMWAWVy6V6t4JHXAPSouSyum4q9BfhuWAXLs7Z+4Il9P7rS9Lrmc4xXU+l/CXVb0m2LI3co3du3Ey3XArDrVAyirdbKLRzE7Il07Xu7+2at83eTJqgqbQYJr0CjYXz0dAoV1E3tkJCjQfs1OCOI+zAu/Hk3vDOIPkHteLgsTAsAhQ7IpPfSJSHvISjzTq4/igI5uVNvQIUANBaQRjmazymZXgoxCxWy/y1L4c=X02ks</property>
+    <property name="attachments.dir">${confluenceHome}/attachments</property>
+    <property name="confluence.setup.server.id">BNT5-GX9G-CZHN-4F7O</property>
+    <property name="confluence.webapp.context.path"></property>
+    <property name="hibernate.c3p0.acquire_increment">1</property>
+    <property name="hibernate.c3p0.idle_test_period">100</property>
+    <property name="hibernate.c3p0.max_size">60</property>
+    <property name="hibernate.c3p0.max_statements">0</property>
+    <property name="hibernate.c3p0.min_size">20</property>
+    <property name="hibernate.c3p0.preferredTestQuery">select 1</property>
+    <property name="hibernate.c3p0.timeout">30</property>
+    <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+    <property name="hibernate.connection.isolation">2</property>
+    <property name="hibernate.connection.password">atlassian</property>
+    <property name="hibernate.connection.url">jdbc:postgresql://ServiceNode:5432/confluence</property>
+    <property name="hibernate.connection.username">atlassian</property>
+    <property name="hibernate.database.lower_non_ascii_supported">true</property>
+    <property name="hibernate.dialect">com.atlassian.confluence.impl.hibernate.dialect.PostgreSQLDialect</property>
+    <property name="hibernate.setup">true</property>
+    <property name="jwt.private.key">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</property>
+    <property name="jwt.public.key">MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEA2SRVCrmor9a2yZNwCbaPd5DXLCNtwtP/ofhOq8ghYfA1bKGjPXNYhk3dd38cVgQq6T4kBXD2ajZfYBtGUAA0Cp5paiWRV+s2kEAqcZBET9r2P7EELC2JqhjZ5cnDMAercCzFz8X9SzZDmxOSNW9ZK4Rfk+gcgMPREoWWiIhlo3l+FTYZx6Q7sTEqFNiTLj9qTQIloy0zacIt8aJPxNDaufl4zlA4lrK2fkni3xoIYFkUb8L1gyCbCCTcxQ4JQzvZcn+Ad6mfXfASoMmgClYnw+NiXvsq716S0q0aW69Zw+20rKS8KAQX3WzyYESFMnstqyWMpDtn3lueGWpzBESyuaTF4/LKyx5nh6BCID1H5PBtjt3+Bc5KAnjrtFfIclwwMgcsoAs39maIN2E3+TpMAoqERwKWcfc2GJBVTWxSSVmB19hVry5aCr8sxZVCjLRy5zU19+998lepG40+QbWXU6OiUrmmrzgSat3f6NhDTujOXYVkxhkBpxI4cTNIsZdDAgMBAAE=</property>
+    <property name="lucene.index.dir">${localHome}/index</property>
+    <property name="synchrony.encryption.disabled">true</property>
+    <property name="synchrony.proxy.enabled">true</property>
+    <property name="webwork.multipart.saveDir">${localHome}/temp</property>
+  </properties>
+</confluence-configuration>
