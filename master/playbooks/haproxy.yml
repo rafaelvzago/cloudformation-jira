@@ -22,4 +22,5 @@
     - name: "Start service haproxy, if not started"
       service:
         name: haproxy
+        enabled: yes
         state: restarted
