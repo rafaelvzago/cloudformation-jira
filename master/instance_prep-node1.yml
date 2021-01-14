@@ -15,6 +15,10 @@
 
 - import_playbook: playbooks/confluence-install.yml
   when: confluence_server | default(False) | bool or confluence_datacenter | default(False) | bool
+- import_playbook: playbooks/confluence-restore-sample-data.yml
+  when: confluence_server | default(False) | bool or jira_datacenter | default(False) | bool
+- import_playbook: playbooks/confluence-server-configure.yml
+  when: confluence_server | default(False) | bool
 
 - import_playbook: playbooks/bitbucket-install.yml
   when: bitbucket_server | default(False) | bool or bitbucket_datacenter | default(False) | bool

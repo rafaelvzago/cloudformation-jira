@@ -1,0 +1,63 @@
+---
+- name: "Playbook for configuring and starting Confluence"
+  hosts: localhost
+  become: yes
+  become_user: ec2-user
+  vars_files:
+    - /home/ec2-user/master/group_vars/cf_node_var.yml
+  
+  tasks:
+
+    - name: "Confluence configure confluence.cfg.xml"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/confluence/confluence.cfg.xml'
+        dest: '{{ atl_app_data_dir }}/confluence/confluence.cfg.xml'
+
+    - name: "Configuring the Confluence home"
+      replace:
+        path: '{{ atl_product_dir }}/confluence/confluence/WEB-INF/classes/confluence-init.properties'
+        regexp: "# confluence.home=/var/data/confluence/"
+        replace: "confluence.home={{ atl_app_data_dir }}/confluence"
+
+    - name: "Configure server.xml"
+      copy:
+        force: yes
+        src: '{{ assets_dir }}/confluence/server.xml'
+        dest: '{{ atl_product_dir }}/confluence/conf/server.xml'
+    
+    - name: "Wait until Postgresql is up and running"
+      wait_for:
+        host: "ServiceNode"
+        port: 5432
+
+    - name: "Enable confluence daemon and starting"
+      become: yes
+      become_user: root
+      ansible.builtin.systemd:
+        name: confluence.service
+        state: started
+        enabled: yes
+
+    - name: "Waiting for instance to be reachable"
+      uri:
+        url: "http://localhost:8090/confluence/status"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 10
+
+    - name: "Waiting for startup to complete"
+      uri:
+        url: "http://localhost:8090/confluence/status"
+        method: GET
+        return_content: yes
+        headers:
+          Content-Type: "application/json"
+      ignore_errors: true
+      register: result
+      until: result.json.state == "RUNNING"
+      retries: 30
+      delay: 10
+
