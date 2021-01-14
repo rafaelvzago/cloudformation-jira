@@ -20,6 +20,7 @@
     - name: "Start service Nginx, if not started"
       service:
         name: nginx
+        enabled: yes
         state: restarted
 
     - name: "Create and configure 'index.html'"
